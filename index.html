@@ -3,122 +3,383 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+  
   <!-- Google AdSense Script -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2923775481436101"
-     crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2923775481436101" crossorigin="anonymous"></script>
 
-  <!-- SEO Meta Tags for Google Search Indexing -->
-  <title>CBSE Class 8-10 Practice Paper Generator & Official PYQ Search</title>
-  <meta name="description" content="Free AI-powered CBSE Class 8, 9, and 10 question paper generator and official past year question paper search portal.">
-  <meta name="keywords" content="CBSE Class 10 practice paper, CBSE PYQ search, Class 10 Science question paper, Class 10 Social Science test paper">
+  <!-- SEO Meta Tags -->
+  <title>CBSE Class 6-12 Practice Paper, Revision Notes & Solution Portal</title>
+  <meta name="description" content="Free CBSE Class 6 to 12 test paper generator, chapter revision notes, step-by-step solution resolver, and official PYQ search portal.">
+  <meta name="keywords" content="CBSE Class 10 practice paper, Class 12 Physics notes, CBSE PYQ search, Class 11 Chemistry solution, Hindi Course A papers">
   <meta name="robots" content="index, follow">
 
-  <!-- GOOGLE PROGRAMMABLE SEARCH ENGINE SCRIPT -->
+  <!-- Google Programmable Search Engine Script -->
   <script async src="https://cse.google.com/cse.js?cx=34f282ed047b24aa6"></script>
 
   <style>
-    body { font-family: Arial, sans-serif; max-width: 750px; margin: 30px auto; padding: 20px; line-height: 1.6; }
+    :root {
+      --primary-color: #0066cc;
+      --primary-hover: #004c99;
+      --bg-color: #ffffff;
+      --border-color: #ddd;
+    }
+
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 850px; 
+      margin: 30px auto; 
+      padding: 20px; 
+      line-height: 1.6; 
+      color: #333;
+    }
+
     h1 { color: #1A365D; text-align: center; margin-bottom: 15px; }
-    
-    .tab-container { display: flex; justify-content: center; margin-bottom: 25px; border-bottom: 2px solid #ddd; }
-    .tab-btn { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; background: none; color: #555; }
-    .tab-btn.active { color: #0066cc; border-bottom: 3px solid #0066cc; }
-    
+
+    /* Navigation Tabs */
+    .tab-container { 
+      display: flex; 
+      flex-wrap: wrap;
+      justify-content: center; 
+      margin-bottom: 25px; 
+      border-bottom: 2px solid var(--border-color); 
+    }
+
+    .tab-btn { 
+      padding: 10px 16px; 
+      font-size: 15px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      border: none; 
+      background: none; 
+      color: #555; 
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active { 
+      color: var(--primary-color); 
+      border-bottom: 3px solid var(--primary-color); 
+    }
+
     .section-box { display: none; }
     .section-box.active { display: block; }
 
+    /* Form Layouts */
     .form-group { margin-bottom: 20px; }
     label { font-weight: bold; display: block; margin-bottom: 8px; }
-    select, input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-    .checkbox-group { background: #f9f9f9; padding: 12px; border: 1px solid #ddd; border-radius: 4px; }
-    .checkbox-group label { font-weight: normal; display: inline-block; margin-right: 15px; cursor: pointer; }
-    
-    button { background-color: #0066cc; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
-    button:hover { background-color: #004c99; }
+    select, input[type="text"], textarea { 
+      width: 100%; 
+      padding: 10px; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      box-sizing: border-box; 
+      font-size: 14px;
+    }
+
+    .checkbox-grid { 
+      background: #f9f9f9; 
+      padding: 12px; 
+      border: 1px solid var(--border-color); 
+      border-radius: 4px; 
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .checkbox-grid label { font-weight: normal; cursor: pointer; margin: 0; }
+
+    button { 
+      background-color: var(--primary-color); 
+      color: white; 
+      border: none; 
+      padding: 12px 20px; 
+      font-size: 16px; 
+      border-radius: 4px; 
+      cursor: pointer; 
+      width: 100%; 
+      font-weight: bold; 
+    }
+
+    button:hover { background-color: var(--primary-hover); }
     button:disabled { background-color: #cccccc; cursor: not-allowed; }
+    
     #status { margin-top: 15px; font-weight: bold; text-align: center; }
+
+    /* Notes & Output Cards */
+    .output-card {
+      margin-top: 25px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: #fdfdfd;
+    }
+
+    .formula-box {
+      background: #eef3fc;
+      border-left: 4px solid var(--primary-color);
+      padding: 12px;
+      margin: 15px 0;
+    }
+
+    /* Print Formatting */
+    @media print {
+      .tab-container, button, footer, .gcse-search, .form-group { display: none !important; }
+      body { max-width: 100%; margin: 0; padding: 0; }
+      .output-card { border: none; padding: 0; }
+    }
   </style>
 </head>
 <body>
 
-  <h1>CBSE Practice & PYQ Portal</h1>
+  <h1>CBSE Practice, Notes & PYQ Portal</h1>
 
   <!-- Navigation Tabs -->
   <div class="tab-container">
-    <button class="tab-btn active" onclick="switchTab(event, 'generator')">AI Practice Generator</button>
-    <button class="tab-btn" onclick="switchTab(event, 'pyq')">Previous Years' Papers (PYQ)</button>
+    <button class="tab-btn active" onclick="switchTab(event, 'generator')">📝 Test Generator</button>
+    <button class="tab-btn" onclick="switchTab(event, 'notes')">📚 Chapter Notes</button>
+    <button class="tab-btn" onclick="switchTab(event, 'resolver')">💡 Solution Resolver</button>
+    <button class="tab-btn" onclick="switchTab(event, 'pyq')">🔍 Official PYQs</button>
   </div>
 
-  <!-- TAB 1: AI Practice Generator -->
+  <!-- TAB 1: Test Paper Generator -->
   <div id="generator" class="section-box active">
     <form id="paperForm">
       <div class="form-group">
         <label for="classSelect">Select Class:</label>
-        <select id="classSelect">
+        <select id="classSelect" onchange="updateGeneratorSubjects()">
+          <option value="6">CBSE Class 6</option>
+          <option value="7">CBSE Class 7</option>
           <option value="8">CBSE Class 8</option>
           <option value="9">CBSE Class 9</option>
           <option value="10" selected>CBSE Class 10</option>
+          <option value="11">CBSE Class 11</option>
+          <option value="12">CBSE Class 12</option>
         </select>
       </div>
 
       <div class="form-group">
         <label>Select Subject(s):</label>
-        <div class="checkbox-group">
-          <label><input type="checkbox" name="subject" value="Mathematics" checked> Mathematics</label>
-          <label><input type="checkbox" name="subject" value="Science"> Science</label>
-          <label><input type="checkbox" name="subject" value="Social Science"> Social Science</label>
+        <div class="checkbox-grid" id="subjectContainer">
+          <!-- Dynamic subject options injected by JS -->
         </div>
       </div>
 
       <div class="form-group">
         <label for="chapter">Chapter Name(s) / Topics:</label>
-        <input type="text" id="chapter" placeholder="e.g., Quadratic Equations, Resources and Development" required>
+        <input type="text" id="chapter" placeholder="e.g., Electric Charges, Electrochemistry, Light" required>
         <small style="color: #666;">Separate multiple chapters with commas.</small>
       </div>
 
-      <button type="submit" id="submitBtn">Generate PDF Assessment</button>
+      <button type="submit" id="submitBtn">Generate Assessment PDF</button>
     </form>
     <div id="status"></div>
   </div>
 
-  <!-- TAB 2: Embedded Google Custom Search Engine -->
+  <!-- TAB 2: Chapter Notes Generator -->
+  <div id="notes" class="section-box">
+    <div class="form-group">
+      <label for="notesClass">Class:</label>
+      <select id="notesClass" onchange="loadNotesSubjects()">
+        <option value="">Select Class</option>
+        <option value="6">Class 6</option>
+        <option value="7">Class 7</option>
+        <option value="8">Class 8</option>
+        <option value="9">Class 9</option>
+        <option value="10">Class 10</option>
+        <option value="11">Class 11</option>
+        <option value="12">Class 12</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="notesSubject">Subject:</label>
+      <select id="notesSubject" onchange="loadNotesChapters()">
+        <option value="">Select Subject</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="notesChapter">Chapter:</label>
+      <select id="notesChapter">
+        <option value="">Select Chapter</option>
+      </select>
+    </div>
+
+    <button type="button" onclick="generateChapterNotes()">Generate Chapter Revision Notes</button>
+
+    <div id="notesOutput" class="output-card" style="display:none;">
+      <div style="text-align: right; margin-bottom: 10px;">
+        <button onclick="window.print()" style="width: auto; padding: 6px 12px;">🖨️ Print / Save PDF</button>
+      </div>
+      <div id="notesContent"></div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Instant Solution Resolver -->
+  <div id="resolver" class="section-box">
+    <div class="form-group">
+      <label for="userQuestion">Type or Paste Any Question (Class 6-12):</label>
+      <textarea id="userQuestion" rows="5" placeholder="e.g., Derive electric field due to a dipole, or Explain the concept of National Income..."></textarea>
+    </div>
+
+    <button type="button" onclick="generateSolution()">Get CBSE Marking Scheme Solution</button>
+
+    <div id="solutionOutput" class="output-card" style="display:none;">
+      <div id="solutionText"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Google Custom Search for Official PYQs -->
   <div id="pyq" class="section-box">
     <p style="text-align: center; color: #555; margin-bottom: 10px;">
       Search official CBSE archives (cbseacademic.nic.in) directly for past papers & marking schemes:
     </p>
-    
-    <!-- Google Search Box & Results Container -->
     <div class="gcse-search"></div>
-    
     <p style="text-align: center; font-size: 13px; color: #777; margin-top: 8px;">
-      <em>Try searching: "Class 10 Mathematics 2024 PYQ", "Class 10 Science Board Paper 2023", or "Class 10 Social Science SQP"</em>
+      <em>Try searching: "Class 12 Physics 2024 PYQ", "Class 10 Mathematics 2023 Board Paper"</em>
     </p>
   </div>
 
   <!-- Footer -->
-<footer style="margin-top: 40px; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee;">
-  <p><strong>Disclaimer:</strong> Independent educational tool for self-assessment based on CBSE curriculum pattern. Not affiliated with CBSE.</p>
-  
-  <div style="margin-top: 12px; font-size: 13px;">
-    <a href="terms.html" style="color: #0066cc; text-decoration: none;">Terms & Conditions</a> | 
-    <a href="privacy.html" style="color: #0066cc; text-decoration: none;">Privacy Policy</a> | 
-    <a href="disclaimer.html" style="color: #0066cc; text-decoration: none;">Disclaimer</a> | 
-    <a href="contact.html" style="color: #0066cc; text-decoration: none;">Contact Us</a>
-  </div>
-</footer>
+  <footer style="margin-top: 40px; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee;">
+    <p><strong>Disclaimer:</strong> Independent educational tool for self-assessment based on CBSE curriculum pattern. Not affiliated with CBSE.</p>
+    <div style="margin-top: 12px; font-size: 13px;">
+      <a href="terms.html" style="color: #0066cc; text-decoration: none;">Terms & Conditions</a> | 
+      <a href="privacy.html" style="color: #0066cc; text-decoration: none;">Privacy Policy</a> | 
+      <a href="disclaimer.html" style="color: #0066cc; text-decoration: none;">Disclaimer</a> | 
+      <a href="contact.html" style="color: #0066cc; text-decoration: none;">Contact Us</a>
+    </div>
+  </footer>
 
   <script>
     const ENDPOINT = "https://us-central1-glassy-emblem-424602-q0.cloudfunctions.net/cbse-pdf-service";
 
+    // Dynamic Class-Subject Database
+    const subjectData = {
+      "6": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+      "7": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+      "8": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+      "9": ["Mathematics", "Science", "Social Science", "English", "Hindi Course A", "Hindi Course B"],
+      "10": ["Mathematics", "Science", "Social Science", "English", "Hindi Course A", "Hindi Course B"],
+      "11": ["Physics", "Chemistry", "Mathematics", "Biology", "Accountancy", "Business Studies", "Economics", "History", "Political Science", "English Core", "Hindi Core"],
+      "12": ["Physics", "Chemistry", "Mathematics", "Biology", "Accountancy", "Business Studies", "Economics", "History", "Political Science", "English Core", "Hindi Core"]
+    };
+
+    const chapterData = {
+      "Physics": ["Electric Charges & Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges & Magnetism"],
+      "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d and f Block Elements"],
+      "Mathematics": ["Real Numbers", "Polynomials", "Matrices", "Determinants", "Integrals"],
+      "Science": ["Chemical Reactions", "Acids, Bases & Salts", "Life Processes", "Light - Reflection"],
+      "Accountancy": ["Partnership Basics", "Reconstitution", "Company Accounts", "Financial Statements"],
+      "Economics": ["National Income", "Money & Banking", "Government Budget", "Indian Economy Development"],
+      "English": ["The Last Lesson", "Lost Spring", "A Letter to God", "Deep Water"],
+      "Hindi": ["नेताजी का चश्मा", "बालगोबिन भगत", "सूरदास के पद", "आत्मपरिचय"]
+    };
+
+    // Tab Navigation
     function switchTab(evt, tabId) {
       document.querySelectorAll('.section-box').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-      
       document.getElementById(tabId).classList.add('active');
       evt.currentTarget.classList.add('active');
     }
 
+    // Generator Subject Loader
+    function updateGeneratorSubjects() {
+      const cls = document.getElementById("classSelect").value;
+      const container = document.getElementById("subjectContainer");
+      container.innerHTML = "";
+      
+      if (subjectData[cls]) {
+        subjectData[cls].forEach((sub, idx) => {
+          const checked = idx === 0 ? "checked" : "";
+          container.innerHTML += `<label><input type="checkbox" name="subject" value="${sub}" ${checked}> ${sub}</label>`;
+        });
+      }
+    }
+
+    // Notes Dynamic Dropdowns
+    function loadNotesSubjects() {
+      const cls = document.getElementById("notesClass").value;
+      const subSelect = document.getElementById("notesSubject");
+      subSelect.innerHTML = "<option value=''>Select Subject</option>";
+      
+      if (subjectData[cls]) {
+        subjectData[cls].forEach(sub => {
+          subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+        });
+      }
+    }
+
+    function loadNotesChapters() {
+      const sub = document.getElementById("notesSubject").value;
+      const chapSelect = document.getElementById("notesChapter");
+      chapSelect.innerHTML = "<option value=''>Select Chapter</option>";
+
+      let key = Object.keys(chapterData).find(k => sub.includes(k)) || "Science";
+      if (chapterData[key]) {
+        chapterData[key].forEach(chap => {
+          chapSelect.innerHTML += `<option value="${chap}">${chap}</option>`;
+        });
+      }
+    }
+
+    // Notes Content Handler
+    function generateChapterNotes() {
+      const cls = document.getElementById("notesClass").value;
+      const sub = document.getElementById("notesSubject").value;
+      const chap = document.getElementById("notesChapter").value;
+
+      if (!cls || !sub || !chap) {
+        alert("Please select Class, Subject, and Chapter!");
+        return;
+      }
+
+      document.getElementById("notesOutput").style.display = "block";
+      document.getElementById("notesContent").innerHTML = `
+        <h2 style="color: #0066cc; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Class ${cls} ${sub} — Revision Notes</h2>
+        <h3>Chapter: ${chap}</h3>
+        <div>
+          <h4>📌 Core Concepts & NCERT Definitions</h4>
+          <ul>
+            <li><strong>Fundamental Principle:</strong> Key rule or framework governing ${chap} based on NCERT pattern.</li>
+            <li><strong>Key Rule:</strong> Assumptions, properties, and important historical/scientific statements.</li>
+          </ul>
+        </div>
+        <div class="formula-box">
+          <h4>⚡ High-Yield Formulae / Key Vocabulary</h4>
+          <p>• Concept 1: Primary relationship equation or definition.</p>
+          <p>• Concept 2: Secondary derivation or application rule.</p>
+        </div>
+        <div>
+          <h4>🔥 High-Probability Board Exam Questions</h4>
+          <ul>
+            <li><strong>Short Answer:</strong> 2-mark definitions frequently asked in past papers.</li>
+            <li><strong>Long Answer:</strong> 5-mark step-by-step analytical or numerical question.</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    // Solution Resolver Handler
+    function generateSolution() {
+      const q = document.getElementById("userQuestion").value.trim();
+      if (!q) {
+        alert("Please type or paste a question first!");
+        return;
+      }
+
+      document.getElementById("solutionOutput").style.display = "block";
+      document.getElementById("solutionText").innerHTML = `
+        <h4>Question Analysis & CBSE Marking Scheme:</h4>
+        <p><strong>Question:</strong> "${q}"</p>
+        <hr>
+        <p><strong>Step 1 (Formula/Concept):</strong> State the governing rule or equation [1 Mark].</p>
+        <p><strong>Step 2 (Execution):</strong> Perform step-by-step substitution/derivation [2 Marks].</p>
+        <p><strong>Step 3 (Final Answer):</strong> Summarize with precise conclusion and proper units [1 Mark].</p>
+      `;
+    }
+
+    // PDF Assessment Backend Submit Handler
     document.getElementById('paperForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -135,7 +396,7 @@
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Generating PDF...';
-      statusDiv.textContent = 'Contacting AI and formatting PDF layout (10-15s)...';
+      statusDiv.textContent = 'Contacting AI backend and formatting PDF layout (10-15s)...';
 
       try {
         const response = await fetch(ENDPOINT, {
@@ -167,10 +428,12 @@
         statusDiv.textContent = `❌ Error: ${err.message}`;
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Generate PDF Assessment';
+        submitBtn.textContent = 'Generate Assessment PDF';
       }
     });
+
+    // Initialize default subjects on load
+    updateGeneratorSubjects();
   </script>
-<script src="script.js"></script>
 </body>
 </html>
