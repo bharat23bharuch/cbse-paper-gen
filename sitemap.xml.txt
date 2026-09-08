@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Homepage & Paper Generator -->
   <url>
-    <loc>https://cbse-paper-gen.netlify.app/</loc>
+    <loc>https://bharat23bharuch.github.io/cbse-paper-gen/</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -10,7 +10,7 @@
 
   <!-- Terms & Conditions Page -->
   <url>
-    <loc>https://cbse-paper-gen.netlify.app/terms.html</loc>
+    <loc>https://bharat23bharuch.github.io/cbse-paper-gen/terms.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -18,7 +18,7 @@
 
   <!-- Privacy Policy Page -->
   <url>
-    <loc>https://cbse-paper-gen.netlify.app/privacy.html</loc>
+    <loc>https://bharat23bharuch.github.io/cbse-paper-gen/privacy.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -26,7 +26,7 @@
 
   <!-- Disclaimer Page -->
   <url>
-    <loc>https://cbse-paper-gen.netlify.app/disclaimer.html</loc>
+    <loc>https://bharat23bharuch.github.io/cbse-paper-gen/disclaimer.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
@@ -34,7 +34,7 @@
 
   <!-- Contact Us Page -->
   <url>
-    <loc>https://cbse-paper-gen.netlify.app/contact.html</loc>
+    <loc>https://bharat23bharuch.github.io/cbse-paper-gen/contact.html</loc>
     <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
