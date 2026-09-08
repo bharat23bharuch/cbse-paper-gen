@@ -60,8 +60,14 @@
       border-bottom: 3px solid var(--primary-color); 
     }
 
-    .section-box { display: none; }
-    .section-box.active { display: block; }
+    /* CRITICAL FIX: Hide non-active sections completely */
+    .section-box { 
+      display: none !important; 
+    }
+    
+    .section-box.active { 
+      display: block !important; 
+    }
 
     /* Form Layouts */
     .form-group { margin-bottom: 20px; }
