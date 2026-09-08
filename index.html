@@ -4,9 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <!-- External CSS Stylesheet -->
-  <link rel="stylesheet" href="style.css">
-
   <!-- Google AdSense Script -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2923775481436101" crossorigin="anonymous"></script>
 
@@ -18,6 +15,118 @@
 
   <!-- Google Programmable Search Engine Script -->
   <script async src="https://cse.google.com/cse.js?cx=34f282ed047b24aa6"></script>
+
+  <style>
+    :root {
+      --primary-color: #0066cc;
+      --primary-hover: #004c99;
+      --bg-color: #ffffff;
+      --border-color: #ddd;
+    }
+
+    body { 
+      font-family: Arial, sans-serif; 
+      max-width: 850px; 
+      margin: 30px auto; 
+      padding: 20px; 
+      line-height: 1.6; 
+      color: #333;
+    }
+
+    h1 { color: #1A365D; text-align: center; margin-bottom: 15px; }
+
+    /* Navigation Tabs */
+    .tab-container { 
+      display: flex; 
+      flex-wrap: wrap;
+      justify-content: center; 
+      margin-bottom: 25px; 
+      border-bottom: 2px solid var(--border-color); 
+    }
+
+    .tab-btn { 
+      padding: 10px 16px; 
+      font-size: 15px; 
+      font-weight: bold; 
+      cursor: pointer; 
+      border: none; 
+      background: none; 
+      color: #555; 
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active { 
+      color: var(--primary-color); 
+      border-bottom: 3px solid var(--primary-color); 
+    }
+
+    .section-box { display: none; }
+    .section-box.active { display: block; }
+
+    /* Form Layouts */
+    .form-group { margin-bottom: 20px; }
+    label { font-weight: bold; display: block; margin-bottom: 8px; }
+    select, input[type="text"], textarea { 
+      width: 100%; 
+      padding: 10px; 
+      border: 1px solid #ccc; 
+      border-radius: 4px; 
+      box-sizing: border-box; 
+      font-size: 14px;
+    }
+
+    .checkbox-grid { 
+      background: #f9f9f9; 
+      padding: 12px; 
+      border: 1px solid var(--border-color); 
+      border-radius: 4px; 
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 10px;
+    }
+
+    .checkbox-grid label { font-weight: normal; cursor: pointer; margin: 0; }
+
+    .action-btn { 
+      background-color: var(--primary-color); 
+      color: white; 
+      border: none; 
+      padding: 12px 20px; 
+      font-size: 16px; 
+      border-radius: 4px; 
+      cursor: pointer; 
+      width: 100%; 
+      font-weight: bold; 
+    }
+
+    .action-btn:hover { background-color: var(--primary-hover); }
+    .action-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+    
+    #status { margin-top: 15px; font-weight: bold; text-align: center; }
+
+    /* Notes & Output Cards */
+    .output-card {
+      margin-top: 25px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: #fdfdfd;
+    }
+
+    .formula-box {
+      background: #eef3fc;
+      border-left: 4px solid var(--primary-color);
+      padding: 12px;
+      margin: 15px 0;
+    }
+
+    /* Print Formatting */
+    @media print {
+      .tab-container, .action-btn, footer, .gcse-search, .form-group { display: none !important; }
+      body { max-width: 100%; margin: 0; padding: 0; }
+      .output-card { border: none; padding: 0; }
+    }
+  </style>
 </head>
 <body>
 
@@ -50,7 +159,7 @@
       <div class="form-group">
         <label>Select Subject(s):</label>
         <div class="checkbox-grid" id="subjectContainer">
-          <!-- Dynamic subject options injected by JS -->
+          <!-- Injected via JS -->
         </div>
       </div>
 
@@ -60,7 +169,7 @@
         <small style="color: #666;">Separate multiple chapters with commas.</small>
       </div>
 
-      <button type="submit" id="submitBtn">Generate Assessment PDF</button>
+      <button type="submit" id="submitBtn" class="action-btn">Generate Assessment PDF</button>
     </form>
     <div id="status"></div>
   </div>
@@ -95,11 +204,11 @@
       </select>
     </div>
 
-    <button type="button" onclick="generateChapterNotes()">Generate Chapter Revision Notes</button>
+    <button type="button" class="action-btn" onclick="generateChapterNotes()">Generate Chapter Revision Notes</button>
 
     <div id="notesOutput" class="output-card" style="display:none;">
       <div style="text-align: right; margin-bottom: 10px;">
-        <button onclick="window.print()" style="width: auto; padding: 6px 12px;">🖨️ Print / Save PDF</button>
+        <button onclick="window.print()" style="width: auto; padding: 6px 12px; cursor: pointer;">🖨️ Print / Save PDF</button>
       </div>
       <div id="notesContent"></div>
     </div>
@@ -112,7 +221,7 @@
       <textarea id="userQuestion" rows="5" placeholder="e.g., Derive electric field due to a dipole, or Explain the concept of National Income..."></textarea>
     </div>
 
-    <button type="button" onclick="generateSolution()">Get CBSE Marking Scheme Solution</button>
+    <button type="button" class="action-btn" onclick="generateSolution()">Get CBSE Marking Scheme Solution</button>
 
     <div id="solutionOutput" class="output-card" style="display:none;">
       <div id="solutionText"></div>
@@ -141,7 +250,237 @@
     </div>
   </footer>
 
-  <!-- External JavaScript File -->
-  <script src="script.js"></script>
+  <script>
+    const ENDPOINT = "https://us-central1-glassy-emblem-424602-q0.cloudfunctions.net/cbse-pdf-service";
+
+    const academicMatrix = {
+      "6": {
+        "Mathematics": ["Knowing Our Numbers", "Whole Numbers", "Playing with Numbers", "Basic Geometrical Ideas", "Integers", "Fractions", "Decimals", "Data Handling", "Mensuration", "Algebra", "Ratio and Proportion"],
+        "Science": ["Components of Food", "Sorting Materials into Groups", "Separation of Substances", "Getting to Know Plants", "Body Movements", "Motion and Measurement", "Light, Shadows and Reflections", "Electricity and Circuits", "Fun with Magnets"],
+        "Social Science": ["What, Where, How and When?", "From Gathering to Growing Food", "In the Earliest Cities", "Globe: Latitudes and Longitudes", "Maps", "Understanding Diversity"],
+        "English": ["A Different Kind of School", "Who I Am", "Fair Play", "A House, A Home", "The Kite"],
+        "Hindi": ["वह चिड़िया जो", "बचपन", "नादान दोस्त", "चाँद से थोड़ी सी गप्पें", "अक्षरों का महत्व"]
+      },
+      "7": {
+        "Mathematics": ["Integers", "Fractions and Decimals", "Data Handling", "Simple Equations", "Lines and Angles", "The Triangle and its Properties", "Comparing Quantities", "Rational Numbers", "Perimeter and Area"],
+        "Science": ["Nutrition in Plants", "Nutrition in Animals", "Heat", "Acids, Bases and Salts", "Physical and Chemical Changes", "Respiration in Organisms", "Transportation in Animals and Plants", "Reproduction in Plants", "Light"],
+        "Social Science": ["Tracing Changes Through a Thousand Years", "New Kings and Kingdoms", "The Delhi Sultans", "Environment", "Inside Our Earth", "Our Changing Earth", "On Equality"],
+        "English": ["Three Questions", "A Gift of Chappals", "Gopal and the Hilsa Fish", "Quality"],
+        "Hindi": ["हम पंछी उन्मुक्त गगन के", "दादी माँ", "हिमालय की बेटियाँ", "कठपुतली", "मिठाईवाला"]
+      },
+      "8": {
+        "Mathematics": ["Rational Numbers", "Linear Equations in One Variable", "Understanding Quadrilaterals", "Data Handling", "Square and Square Roots", "Cube and Cube Roots", "Comparing Quantities", "Algebraic Expressions", "Mensuration", "Factorisation"],
+        "Science": ["Crop Production and Management", "Microorganisms", "Coal and Petroleum", "Combustion and Flame", "Conservation of Plants and Animals", "Reproduction in Animals", "Force and Pressure", "Friction", "Sound", "Light"],
+        "Social Science": ["How, When and Where", "From Trade to Territory", "Ruling the Countryside", "Resources", "Land, Soil, Water", "Agriculture", "The Indian Constitution"],
+        "English": ["The Best Christmas Present in the World", "The Tsunami", "Glimpses of the Past", "Bepin Choudhury's Lapse of Memory"],
+        "Hindi": ["ध्वनि", "लाख की चूड़ियाँ", "बस की यात्रा", "दीवानों की हस्ती", "भगवान के डाकिए"]
+      },
+      "9": {
+        "Mathematics": ["Number Systems", "Polynomials", "Coordinate Geometry", "Linear Equations in Two Variables", "Lines and Angles", "Triangles", "Quadrilaterals", "Circles", "Heron's Formula", "Surface Areas and Volumes", "Statistics"],
+        "Science": ["Matter in Our Surroundings", "Is Matter Around Us Pure?", "Atoms and Molecules", "Structure of the Atom", "The Fundamental Unit of Life", "Tissues", "Motion", "Force and Laws of Motion", "Gravitation", "Work and Energy", "Sound"],
+        "Social Science": ["The French Revolution", "Socialism in Europe", "Nazism and the Rise of Hitler", "India - Size and Location", "Physical Features of India", "Drainage", "What is Democracy?", "Constitutional Design"],
+        "English": ["The Fun They Had", "The Sound of Music", "The Little Girl", "A Truly Beautiful Mind", "My Childhood"],
+        "Hindi Course A": ["दो बैलों की कथा", "ल्हासा की ओर", "उपभोक्तावाद की संस्कृति", "सांवले सपनों की याद", "कबीर - साखियाँ एवं सबद"],
+        "Hindi Course B": ["धूल", "दुःख का अधिकार", "एवरेस्ट: मेरी शिखर यात्रा", "तुम कब जाओगे, अतिथि", "रहीम के दोहे"]
+      },
+      "10": {
+        "Mathematics": ["Real Numbers", "Polynomials", "Pair of Linear Equations", "Quadratic Equations", "Arithmetic Progressions", "Triangles", "Coordinate Geometry", "Introduction to Trigonometry", "Applications of Trigonometry", "Circles", "Areas Related to Circles", "Surface Areas and Volumes", "Statistics", "Probability"],
+        "Science": ["Chemical Reactions and Equations", "Acids, Bases and Salts", "Metals and Non-metals", "Carbon and Its Compounds", "Life Processes", "Control and Coordination", "How do Organisms Reproduce?", "Heredity and Evolution", "Light - Reflection and Refraction", "The Human Eye", "Electricity", "Magnetic Effects of Electric Current"],
+        "Social Science": ["The Rise of Nationalism in Europe", "Nationalism in India", "The Making of a Global World", "Resources and Development", "Forest and Wildlife Resources", "Water Resources", "Agriculture", "Power Sharing", "Federalism", "Development"],
+        "English": ["A Letter to God", "Nelson Mandela: Long Walk to Freedom", "Two Stories About Flying", "From the Diary of Anne Frank", "Glimpses of India", "Madam Rides the Bus", "Dust of Snow", "Fire and Ice"],
+        "Hindi Course A": ["नेताजी का चश्मा", "बालगोबिन भगत", "लखनवी अंदाज़", "सूरदास के पद", "राम-लक्ष्मण-परशुराम संवाद"],
+        "Hindi Course B": ["बड़े भाई साहब", "डायरी का एक पन्ना", "तताँरा-वामीरो कथा", "साखी - कबीर", "पद - मीरा"]
+      },
+      "11": {
+        "Physics": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles", "Gravitation", "Mechanical Properties of Solids", "Fluids", "Thermodynamics", "Waves"],
+        "Chemistry": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements", "Chemical Bonding", "Thermodynamics", "Equilibrium", "Redox Reactions", "Organic Chemistry Basics", "Hydrocarbons"],
+        "Mathematics": ["Sets", "Relations and Functions", "Trigonometric Functions", "Complex Numbers", "Linear Inequalities", "Permutations and Combinations", "Sequences and Series", "Straight Lines", "Limits and Derivatives"],
+        "Biology": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Cell: The Unit of Life", "Biomolecules", "Photosynthesis in Higher Plants", "Respiration in Plants"],
+        "Accountancy": ["Introduction to Accounting", "Theory Base of Accounting", "Recording of Transactions", "Bank Reconciliation Statement", "Trial Balance", "Depreciation", "Financial Statements"],
+        "Business Studies": ["Business, Trade and Commerce", "Forms of Business Organisations", "Private, Public and Global Enterprises", "Business Services", "Emerging Modes of Business", "Business Finance"],
+        "Economics": ["Introduction to Microeconomics", "Consumer's Equilibrium and Demand", "Producer Behaviour and Supply", "Collection of Data", "Measures of Central Tendency", "Correlation"],
+        "History": ["Writing and City Life", "An Empire Across Three Continents", "Nomadic Empires", "Changing Cultural Traditions", "Paths to Modernisation"],
+        "Political Science": ["Constitution: Why and How?", "Rights in the Indian Constitution", "Election and Representation", "Executive", "Legislature", "Judiciary", "Federalism", "Freedom", "Equality"],
+        "English Core": ["The Portrait of a Lady", "We're Not Afraid to Die", "Discovering Tut", "The Silk Road", "A Photograph", "The Voice of the Rain"],
+        "Hindi Core": ["नमक का दारोगा", "मियाँ नसीरुद्दीन", "अपु के साथ ढाई साल", "गलता लोहा", "कबीर के पद", "मीरा के पद"]
+      },
+      "12": {
+        "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Electromagnetic Induction", "Alternating Current", "Ray Optics", "Wave Optics", "Atoms", "Nuclei", "Semiconductors"],
+        "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"],
+        "Mathematics": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"],
+        "Biology": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Biotechnology Principles", "Ecosystem"],
+        "Accountancy": ["Partnership Fundamentals", "Goodwill Valuation", "Admission of a Partner", "Retirement/Death of a Partner", "Dissolution of Partnership", "Company Accounts", "Financial Statements Analysis", "Cash Flow Statement"],
+        "Business Studies": ["Nature and Significance of Management", "Principles of Management", "Business Environment", "Planning", "Organising", "Staffing", "Directing", "Controlling", "Financial Management", "Marketing"],
+        "Economics": ["National Income Accounting", "Money and Banking", "Government Budget", "Open Economy Macroeconomics", "Development Experience (1947-90)", "Economic Reforms since 1991", "Current Challenges Facing Indian Economy"],
+        "History": ["Bricks, Beads and Bones", "Kings, Farmers and Towns", "Kinship, Caste and Class", "Thinkers, Beliefs and Buildings", "Bhakti-Sufi Traditions", "An Imperial Capital: Vijayanagara", "Mahatma Gandhi and Nationalist Movement"],
+        "Political Science": ["The End of Bipolarity", "Contemporary Centres of Power", "Contemporary South Asia", "International Organisations", "Challenges of Nation Building", "Era of One-Party Dominance", "Politics of Planned Development"],
+        "English Core": ["The Last Lesson", "Lost Spring", "Deep Water", "The Rattrap", "Indigo", "My Mother at Sixty-six", "Keeping Quiet", "The Third Level", "The Enemy"],
+        "Hindi Core": ["आत्मपरिचय / एक गीत", "पतंग", "कैमरे में बंद अपाहिज", "उषा", "भक्तिन", "बाज़ार दर्शन", "पहलवान की ढोलक", "श्रम विभाजन और जाति प्रथा"]
+      }
+    };
+
+    function switchTab(evt, tabId) {
+      document.querySelectorAll('.section-box').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    function updateGeneratorSubjects() {
+      const cls = document.getElementById("classSelect").value;
+      const container = document.getElementById("subjectContainer");
+      container.innerHTML = "";
+      
+      if (academicMatrix[cls]) {
+        Object.keys(academicMatrix[cls]).forEach((sub, idx) => {
+          const checked = idx === 0 ? "checked" : "";
+          container.innerHTML += `<label><input type="checkbox" name="subject" value="${sub}" ${checked}> ${sub}</label>`;
+        });
+      }
+    }
+
+    function loadNotesSubjects() {
+      const cls = document.getElementById("notesClass").value;
+      const subSelect = document.getElementById("notesSubject");
+      const chapSelect = document.getElementById("notesChapter");
+
+      subSelect.innerHTML = "<option value=''>Select Subject</option>";
+      chapSelect.innerHTML = "<option value=''>Select Chapter</option>";
+      
+      if (academicMatrix[cls]) {
+        Object.keys(academicMatrix[cls]).forEach(sub => {
+          subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
+        });
+      }
+    }
+
+    function loadNotesChapters() {
+      const cls = document.getElementById("notesClass").value;
+      const sub = document.getElementById("notesSubject").value;
+      const chapSelect = document.getElementById("notesChapter");
+
+      chapSelect.innerHTML = "<option value=''>Select Chapter</option>";
+
+      if (academicMatrix[cls] && academicMatrix[cls][sub]) {
+        academicMatrix[cls][sub].forEach(chap => {
+          chapSelect.innerHTML += `<option value="${chap}">${chap}</option>`;
+        });
+      }
+    }
+
+    function generateChapterNotes() {
+      const cls = document.getElementById("notesClass").value;
+      const sub = document.getElementById("notesSubject").value;
+      const chap = document.getElementById("notesChapter").value;
+
+      if (!cls || !sub || !chap) {
+        alert("Please select Class, Subject, and Chapter!");
+        return;
+      }
+
+      document.getElementById("notesOutput").style.display = "block";
+      document.getElementById("notesContent").innerHTML = `
+        <h2 style="color: #0066cc; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Class ${cls} ${sub} — Revision Notes</h2>
+        <h3 style="color: #444; margin-top: 5px;">Chapter: ${chap}</h3>
+        
+        <div>
+          <h4>📌 NCERT Core Concepts & Key Definitions</h4>
+          <ul>
+            <li><strong>Fundamental Principle:</strong> Comprehensive overview of primary theorems, principles, and concepts for ${chap}.</li>
+            <li><strong>Key Assumptions & Rules:</strong> Governing rules, historical context, and scientific laws required by the CBSE marking scheme.</li>
+          </ul>
+        </div>
+
+        <div class="formula-box">
+          <h4>⚡ High-Yield Formulae / Important Terms</h4>
+          <p>• <strong>Primary Formula / Equation:</strong> Core relationship equations applicable to numerical and theoretical questions.</p>
+          <p>• <strong>Secondary Relation:</strong> Unit conversions, mathematical derivations, or specific grammar/textual principles.</p>
+        </div>
+
+        <div>
+          <h4>🔥 High-Probability Board & School Exam Questions</h4>
+          <ul>
+            <li><strong>Short Answer (2 Marks):</strong> Standard definition and concept identification questions frequently asked in past year papers.</li>
+            <li><strong>Long Answer (5 Marks):</strong> Step-by-step analytical derivation, process diagram, or detailed contextual explanation.</li>
+          </ul>
+        </div>
+      `;
+    }
+
+    function generateSolution() {
+      const question = document.getElementById("userQuestion").value.trim();
+
+      if (!question) {
+        alert("Please enter or paste a question first!");
+        return;
+      }
+
+      document.getElementById("solutionOutput").style.display = "block";
+      document.getElementById("solutionText").innerHTML = `
+        <h4 style="color: #0066cc; margin-bottom: 5px;">Question Analysis & CBSE Marking Scheme Solution</h4>
+        <p style="background: #f4f4f4; padding: 10px; border-radius: 4px;"><strong>Question:</strong> "${question}"</p>
+        <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
+        <p><strong>Step 1 (Given & Governing Rule):</strong> Identify known values, underlying laws, or grammatical rules applicable to the query [1 Mark].</p>
+        <p><strong>Step 2 (Execution / Step-by-Step Derivation):</strong> Apply mathematical substitution, process derivation, or structural explanation [2 Marks].</p>
+        <p><strong>Step 3 (Final Answer & Conclusion):</strong> Conclude with exact units, final evaluation, or summary statement [1 Mark].</p>
+      `;
+    }
+
+    // Backend Cloud Function Handler
+    document.getElementById('paperForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const classNum = document.getElementById('classSelect').value;
+      const selectedSubjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
+      const chapterInput = document.getElementById('chapter').value.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      const statusDiv = document.getElementById('status');
+
+      if (selectedSubjects.length === 0) {
+        alert("Please select at least one subject!");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Generating PDF...';
+      statusDiv.textContent = 'Contacting AI backend and formatting PDF layout (10-15s)...';
+
+      try {
+        const response = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            class: classNum,
+            subject: selectedSubjects.join(" & "), 
+            chapter: chapterInput, 
+            marks: "80", 
+            time: "3 Hours" 
+          })
+        });
+
+        if (!response.ok) throw new Error(`Server returned HTTP ${response.status}`);
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `CBSE_Class_${classNum}_${selectedSubjects.join('_')}_${chapterInput.replace(/ /g, '_')}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+
+        statusDiv.textContent = '✅ PDF downloaded successfully!';
+      } catch (err) {
+        statusDiv.textContent = `❌ Error: ${err.message}`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Generate Assessment PDF';
+      }
+    });
+
+    // Initialize Test Generator options on page load
+    updateGeneratorSubjects();
+  </script>
 </body>
 </html>
