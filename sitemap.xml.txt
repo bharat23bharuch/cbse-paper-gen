@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage & Paper Generator -->
+  <url>
+    <loc>https://cbse-paper-gen.netlify.app/</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Terms & Conditions Page -->
+  <url>
+    <loc>https://cbse-paper-gen.netlify.app/terms.html</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Privacy Policy Page -->
+  <url>
+    <loc>https://cbse-paper-gen.netlify.app/privacy.html</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Disclaimer Page -->
+  <url>
+    <loc>https://cbse-paper-gen.netlify.app/disclaimer.html</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Contact Us Page -->
+  <url>
+    <loc>https://cbse-paper-gen.netlify.app/contact.html</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

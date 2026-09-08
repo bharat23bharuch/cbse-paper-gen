@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Google AdSense Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2923775481436101"
+     crossorigin="anonymous"></script>
+
+  <!-- SEO Meta Tags for Google Search Indexing -->
+  <title>CBSE Class 8-10 Practice Paper Generator & Official PYQ Search</title>
+  <meta name="description" content="Free AI-powered CBSE Class 8, 9, and 10 question paper generator and official past year question paper search portal.">
+  <meta name="keywords" content="CBSE Class 10 practice paper, CBSE PYQ search, Class 10 Science question paper, Class 10 Social Science test paper">
+  <meta name="robots" content="index, follow">
+
+  <!-- GOOGLE PROGRAMMABLE SEARCH ENGINE SCRIPT -->
+  <script async src="https://cse.google.com/cse.js?cx=34f282ed047b24aa6"></script>
+
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 750px; margin: 30px auto; padding: 20px; line-height: 1.6; }
+    h1 { color: #1A365D; text-align: center; margin-bottom: 15px; }
+    
+    .tab-container { display: flex; justify-content: center; margin-bottom: 25px; border-bottom: 2px solid #ddd; }
+    .tab-btn { padding: 12px 24px; font-size: 16px; font-weight: bold; cursor: pointer; border: none; background: none; color: #555; }
+    .tab-btn.active { color: #0066cc; border-bottom: 3px solid #0066cc; }
+    
+    .section-box { display: none; }
+    .section-box.active { display: block; }
+
+    .form-group { margin-bottom: 20px; }
+    label { font-weight: bold; display: block; margin-bottom: 8px; }
+    select, input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+    .checkbox-group { background: #f9f9f9; padding: 12px; border: 1px solid #ddd; border-radius: 4px; }
+    .checkbox-group label { font-weight: normal; display: inline-block; margin-right: 15px; cursor: pointer; }
+    
+    button { background-color: #0066cc; color: white; border: none; padding: 12px 20px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; }
+    button:hover { background-color: #004c99; }
+    button:disabled { background-color: #cccccc; cursor: not-allowed; }
+    #status { margin-top: 15px; font-weight: bold; text-align: center; }
+  </style>
+</head>
+<body>
+
+  <h1>CBSE Practice & PYQ Portal</h1>
+
+  <!-- Navigation Tabs -->
+  <div class="tab-container">
+    <button class="tab-btn active" onclick="switchTab(event, 'generator')">AI Practice Generator</button>
+    <button class="tab-btn" onclick="switchTab(event, 'pyq')">Previous Years' Papers (PYQ)</button>
+  </div>
+
+  <!-- TAB 1: AI Practice Generator -->
+  <div id="generator" class="section-box active">
+    <form id="paperForm">
+      <div class="form-group">
+        <label for="classSelect">Select Class:</label>
+        <select id="classSelect">
+          <option value="8">CBSE Class 8</option>
+          <option value="9">CBSE Class 9</option>
+          <option value="10" selected>CBSE Class 10</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Select Subject(s):</label>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="subject" value="Mathematics" checked> Mathematics</label>
+          <label><input type="checkbox" name="subject" value="Science"> Science</label>
+          <label><input type="checkbox" name="subject" value="Social Science"> Social Science</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="chapter">Chapter Name(s) / Topics:</label>
+        <input type="text" id="chapter" placeholder="e.g., Quadratic Equations, Resources and Development" required>
+        <small style="color: #666;">Separate multiple chapters with commas.</small>
+      </div>
+
+      <button type="submit" id="submitBtn">Generate PDF Assessment</button>
+    </form>
+    <div id="status"></div>
+  </div>
+
+  <!-- TAB 2: Embedded Google Custom Search Engine -->
+  <div id="pyq" class="section-box">
+    <p style="text-align: center; color: #555; margin-bottom: 10px;">
+      Search official CBSE archives (cbseacademic.nic.in) directly for past papers & marking schemes:
+    </p>
+    
+    <!-- Google Search Box & Results Container -->
+    <div class="gcse-search"></div>
+    
+    <p style="text-align: center; font-size: 13px; color: #777; margin-top: 8px;">
+      <em>Try searching: "Class 10 Mathematics 2024 PYQ", "Class 10 Science Board Paper 2023", or "Class 10 Social Science SQP"</em>
+    </p>
+  </div>
+
+  <!-- Footer -->
+<footer style="margin-top: 40px; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee;">
+  <p><strong>Disclaimer:</strong> Independent educational tool for self-assessment based on CBSE curriculum pattern. Not affiliated with CBSE.</p>
+  
+  <div style="margin-top: 12px; font-size: 13px;">
+    <a href="terms.html" style="color: #0066cc; text-decoration: none;">Terms & Conditions</a> | 
+    <a href="privacy.html" style="color: #0066cc; text-decoration: none;">Privacy Policy</a> | 
+    <a href="disclaimer.html" style="color: #0066cc; text-decoration: none;">Disclaimer</a> | 
+    <a href="contact.html" style="color: #0066cc; text-decoration: none;">Contact Us</a>
+  </div>
+</footer>
+
+  <script>
+    const ENDPOINT = "https://us-central1-glassy-emblem-424602-q0.cloudfunctions.net/cbse-pdf-service";
+
+    function switchTab(evt, tabId) {
+      document.querySelectorAll('.section-box').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+
+    document.getElementById('paperForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const classNum = document.getElementById('classSelect').value;
+      const selectedSubjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
+      const chapterInput = document.getElementById('chapter').value.trim();
+      const submitBtn = document.getElementById('submitBtn');
+      const statusDiv = document.getElementById('status');
+
+      if (selectedSubjects.length === 0) {
+        alert("Please select at least one subject!");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Generating PDF...';
+      statusDiv.textContent = 'Contacting AI and formatting PDF layout (10-15s)...';
+
+      try {
+        const response = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            class: classNum,
+            subject: selectedSubjects.join(" & "), 
+            chapter: chapterInput, 
+            marks: "80", 
+            time: "3 Hours" 
+          })
+        });
+
+        if (!response.ok) throw new Error(`Server returned HTTP ${response.status}`);
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `CBSE_Class_${classNum}_${selectedSubjects.join('_')}_${chapterInput.replace(/ /g, '_')}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+
+        statusDiv.textContent = '✅ PDF downloaded successfully!';
+      } catch (err) {
+        statusDiv.textContent = `❌ Error: ${err.message}`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Generate PDF Assessment';
+      }
+    });
+  </script>
+</body>
+</html>
