@@ -20,7 +20,6 @@
     :root {
       --primary-color: #0066cc;
       --primary-hover: #004c99;
-      --bg-color: #ffffff;
       --border-color: #ddd;
     }
 
@@ -60,7 +59,6 @@
       border-bottom: 3px solid var(--primary-color); 
     }
 
-    /* CRITICAL FIX: Hide non-active sections completely */
     .section-box { 
       display: none !important; 
     }
@@ -110,7 +108,29 @@
     
     #status { margin-top: 15px; font-weight: bold; text-align: center; }
 
-    /* Notes & Output Cards */
+    /* Custom PYQ Search Container */
+    .pyq-search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pyq-search-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .pyq-search-btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Output Cards */
     .output-card {
       margin-top: 25px;
       padding: 20px;
@@ -126,9 +146,8 @@
       margin: 15px 0;
     }
 
-    /* Print Formatting */
     @media print {
-      .tab-container, .action-btn, footer, .gcse-search, .form-group { display: none !important; }
+      .tab-container, .action-btn, footer, .gcse-search, .form-group, .pyq-search-box { display: none !important; }
       body { max-width: 100%; margin: 0; padding: 0; }
       .output-card { border: none; padding: 0; }
     }
@@ -171,7 +190,7 @@
 
       <div class="form-group">
         <label for="chapter">Chapter Name(s) / Topics:</label>
-        <input type="text" id="chapter" placeholder="e.g., Electric Charges, Electrochemistry, Light" required>
+        <input type="text" id="chapter" placeholder="e.g., Quadratic Equations, Light, Electrochemistry" required>
         <small style="color: #666;">Separate multiple chapters with commas.</small>
       </div>
 
@@ -224,7 +243,7 @@
   <div id="resolver" class="section-box">
     <div class="form-group">
       <label for="userQuestion">Type or Paste Any Question (Class 6-12):</label>
-      <textarea id="userQuestion" rows="5" placeholder="e.g., Derive electric field due to a dipole, or Explain the concept of National Income..."></textarea>
+      <textarea id="userQuestion" rows="5" placeholder="e.g., Calculate capital G in SI unit using dimensions..."></textarea>
     </div>
 
     <button type="button" class="action-btn" onclick="generateSolution()">Get CBSE Marking Scheme Solution</button>
@@ -236,12 +255,21 @@
 
   <!-- TAB 4: Google Custom Search for Official PYQs -->
   <div id="pyq" class="section-box">
-    <p style="text-align: center; color: #555; margin-bottom: 10px;">
+    <p style="text-align: center; color: #555; margin-bottom: 15px;">
       Search official CBSE archives (cbseacademic.nic.in) directly for past papers & marking schemes:
     </p>
+
+    <!-- Custom Search Input with Explicit Search Button -->
+    <div class="pyq-search-box">
+      <input type="text" id="pyqCustomInput" placeholder="e.g., Class 10 Science Board Paper 2023" onkeypress="if(event.key==='Enter') executePyqSearch()">
+      <button type="button" class="pyq-search-btn" onclick="executePyqSearch()">🔍 Search Official Archives</button>
+    </div>
+
+    <!-- Google Custom Search Engine Container -->
     <div class="gcse-search"></div>
-    <p style="text-align: center; font-size: 13px; color: #777; margin-top: 8px;">
-      <em>Try searching: "Class 12 Physics 2024 PYQ", "Class 10 Mathematics 2023 Board Paper"</em>
+
+    <p style="text-align: center; font-size: 13px; color: #777; margin-top: 12px;">
+      <em>Try searching: "Class 12 Physics 2024 PYQ", "Class 10 Mathematics 2023 Board Paper", or "Class 10 SQP"</em>
     </p>
   </div>
 
@@ -261,67 +289,63 @@
 
     const academicMatrix = {
       "6": {
-        "Mathematics": ["Knowing Our Numbers", "Whole Numbers", "Playing with Numbers", "Basic Geometrical Ideas", "Integers", "Fractions", "Decimals", "Data Handling", "Mensuration", "Algebra", "Ratio and Proportion"],
-        "Science": ["Components of Food", "Sorting Materials into Groups", "Separation of Substances", "Getting to Know Plants", "Body Movements", "Motion and Measurement", "Light, Shadows and Reflections", "Electricity and Circuits", "Fun with Magnets"],
-        "Social Science": ["What, Where, How and When?", "From Gathering to Growing Food", "In the Earliest Cities", "Globe: Latitudes and Longitudes", "Maps", "Understanding Diversity"],
-        "English": ["A Different Kind of School", "Who I Am", "Fair Play", "A House, A Home", "The Kite"],
-        "Hindi": ["वह चिड़िया जो", "बचपन", "नादान दोस्त", "चाँद से थोड़ी सी गप्पें", "अक्षरों का महत्व"]
+        "Mathematics": ["Knowing Our Numbers", "Whole Numbers", "Playing with Numbers", "Integers", "Fractions", "Decimals"],
+        "Science": ["Components of Food", "Sorting Materials into Groups", "Separation of Substances", "Getting to Know Plants"],
+        "Social Science": ["What, Where, How and When?", "From Gathering to Growing Food", "Globe: Latitudes and Longitudes"],
+        "English": ["A Different Kind of School", "Who I Am", "Fair Play"],
+        "Hindi": ["वह चिड़िया जो", "बचपन", "नादान दोस्त"]
       },
       "7": {
-        "Mathematics": ["Integers", "Fractions and Decimals", "Data Handling", "Simple Equations", "Lines and Angles", "The Triangle and its Properties", "Comparing Quantities", "Rational Numbers", "Perimeter and Area"],
-        "Science": ["Nutrition in Plants", "Nutrition in Animals", "Heat", "Acids, Bases and Salts", "Physical and Chemical Changes", "Respiration in Organisms", "Transportation in Animals and Plants", "Reproduction in Plants", "Light"],
-        "Social Science": ["Tracing Changes Through a Thousand Years", "New Kings and Kingdoms", "The Delhi Sultans", "Environment", "Inside Our Earth", "Our Changing Earth", "On Equality"],
-        "English": ["Three Questions", "A Gift of Chappals", "Gopal and the Hilsa Fish", "Quality"],
-        "Hindi": ["हम पंछी उन्मुक्त गगन के", "दादी माँ", "हिमालय की बेटियाँ", "कठपुतली", "मिठाईवाला"]
+        "Mathematics": ["Integers", "Fractions and Decimals", "Data Handling", "Simple Equations", "Lines and Angles"],
+        "Science": ["Nutrition in Plants", "Nutrition in Animals", "Heat", "Acids, Bases and Salts"],
+        "Social Science": ["Tracing Changes Through a Thousand Years", "New Kings and Kingdoms", "Environment"],
+        "English": ["Three Questions", "A Gift of Chappals", "Quality"],
+        "Hindi": ["हम पंछी उन्मुक्त गगन के", "दादी माँ", "हिमालय की बेटियाँ"]
       },
       "8": {
-        "Mathematics": ["Rational Numbers", "Linear Equations in One Variable", "Understanding Quadrilaterals", "Data Handling", "Square and Square Roots", "Cube and Cube Roots", "Comparing Quantities", "Algebraic Expressions", "Mensuration", "Factorisation"],
-        "Science": ["Crop Production and Management", "Microorganisms", "Coal and Petroleum", "Combustion and Flame", "Conservation of Plants and Animals", "Reproduction in Animals", "Force and Pressure", "Friction", "Sound", "Light"],
-        "Social Science": ["How, When and Where", "From Trade to Territory", "Ruling the Countryside", "Resources", "Land, Soil, Water", "Agriculture", "The Indian Constitution"],
-        "English": ["The Best Christmas Present in the World", "The Tsunami", "Glimpses of the Past", "Bepin Choudhury's Lapse of Memory"],
-        "Hindi": ["ध्वनि", "लाख की चूड़ियाँ", "बस की यात्रा", "दीवानों की हस्ती", "भगवान के डाकिए"]
+        "Mathematics": ["Rational Numbers", "Linear Equations in One Variable", "Understanding Quadrilaterals", "Square and Square Roots"],
+        "Science": ["Crop Production and Management", "Microorganisms", "Coal and Petroleum", "Combustion and Flame"],
+        "Social Science": ["How, When and Where", "From Trade to Territory", "Resources"],
+        "English": ["The Best Christmas Present in the World", "The Tsunami"],
+        "Hindi": ["ध्वनि", "लाख की चूड़ियाँ", "बस की यात्रा"]
       },
       "9": {
-        "Mathematics": ["Number Systems", "Polynomials", "Coordinate Geometry", "Linear Equations in Two Variables", "Lines and Angles", "Triangles", "Quadrilaterals", "Circles", "Heron's Formula", "Surface Areas and Volumes", "Statistics"],
-        "Science": ["Matter in Our Surroundings", "Is Matter Around Us Pure?", "Atoms and Molecules", "Structure of the Atom", "The Fundamental Unit of Life", "Tissues", "Motion", "Force and Laws of Motion", "Gravitation", "Work and Energy", "Sound"],
-        "Social Science": ["The French Revolution", "Socialism in Europe", "Nazism and the Rise of Hitler", "India - Size and Location", "Physical Features of India", "Drainage", "What is Democracy?", "Constitutional Design"],
-        "English": ["The Fun They Had", "The Sound of Music", "The Little Girl", "A Truly Beautiful Mind", "My Childhood"],
-        "Hindi Course A": ["दो बैलों की कथा", "ल्हासा की ओर", "उपभोक्तावाद की संस्कृति", "सांवले सपनों की याद", "कबीर - साखियाँ एवं सबद"],
-        "Hindi Course B": ["धूल", "दुःख का अधिकार", "एवरेस्ट: मेरी शिखर यात्रा", "तुम कब जाओगे, अतिथि", "रहीम के दोहे"]
+        "Mathematics": ["Number Systems", "Polynomials", "Coordinate Geometry", "Linear Equations in Two Variables", "Triangles"],
+        "Science": ["Matter in Our Surroundings", "Is Matter Around Us Pure?", "Atoms and Molecules", "Cell: Unit of Life", "Motion"],
+        "Social Science": ["The French Revolution", "Socialism in Europe", "India - Size and Location"],
+        "English": ["The Fun They Had", "The Sound of Music", "The Little Girl"],
+        "Hindi Course A": ["दो बैलों की कथा", "ल्हासा की ओर", "कबीर - साखियाँ एवं सबद"],
+        "Hindi Course B": ["धूल", "दुःख का अधिकार", "रहीम के दोहे"]
       },
       "10": {
-        "Mathematics": ["Real Numbers", "Polynomials", "Pair of Linear Equations", "Quadratic Equations", "Arithmetic Progressions", "Triangles", "Coordinate Geometry", "Introduction to Trigonometry", "Applications of Trigonometry", "Circles", "Areas Related to Circles", "Surface Areas and Volumes", "Statistics", "Probability"],
-        "Science": ["Chemical Reactions and Equations", "Acids, Bases and Salts", "Metals and Non-metals", "Carbon and Its Compounds", "Life Processes", "Control and Coordination", "How do Organisms Reproduce?", "Heredity and Evolution", "Light - Reflection and Refraction", "The Human Eye", "Electricity", "Magnetic Effects of Electric Current"],
-        "Social Science": ["The Rise of Nationalism in Europe", "Nationalism in India", "The Making of a Global World", "Resources and Development", "Forest and Wildlife Resources", "Water Resources", "Agriculture", "Power Sharing", "Federalism", "Development"],
-        "English": ["A Letter to God", "Nelson Mandela: Long Walk to Freedom", "Two Stories About Flying", "From the Diary of Anne Frank", "Glimpses of India", "Madam Rides the Bus", "Dust of Snow", "Fire and Ice"],
-        "Hindi Course A": ["नेताजी का चश्मा", "बालगोबिन भगत", "लखनवी अंदाज़", "सूरदास के पद", "राम-लक्ष्मण-परशुराम संवाद"],
-        "Hindi Course B": ["बड़े भाई साहब", "डायरी का एक पन्ना", "तताँरा-वामीरो कथा", "साखी - कबीर", "पद - मीरा"]
+        "Mathematics": ["Real Numbers", "Polynomials", "Pair of Linear Equations", "Quadratic Equations", "Arithmetic Progressions", "Triangles", "Trigonometry"],
+        "Science": ["Chemical Reactions and Equations", "Acids, Bases and Salts", "Metals and Non-metals", "Life Processes", "Light - Reflection and Refraction", "Electricity"],
+        "Social Science": ["The Rise of Nationalism in Europe", "Nationalism in India", "Resources and Development", "Power Sharing"],
+        "English": ["A Letter to God", "Nelson Mandela: Long Walk to Freedom", "Two Stories About Flying"],
+        "Hindi Course A": ["नेताजी का चश्मा", "बालगोबिन भगत", "सूरदास के पद"],
+        "Hindi Course B": ["बड़े भाई साहब", "डायरी का एक पन्ना", "साखी - कबीर"]
       },
       "11": {
-        "Physics": ["Units and Measurements", "Motion in a Straight Line", "Motion in a Plane", "Laws of Motion", "Work, Energy and Power", "System of Particles", "Gravitation", "Mechanical Properties of Solids", "Fluids", "Thermodynamics", "Waves"],
-        "Chemistry": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Classification of Elements", "Chemical Bonding", "Thermodynamics", "Equilibrium", "Redox Reactions", "Organic Chemistry Basics", "Hydrocarbons"],
-        "Mathematics": ["Sets", "Relations and Functions", "Trigonometric Functions", "Complex Numbers", "Linear Inequalities", "Permutations and Combinations", "Sequences and Series", "Straight Lines", "Limits and Derivatives"],
-        "Biology": ["The Living World", "Biological Classification", "Plant Kingdom", "Animal Kingdom", "Cell: The Unit of Life", "Biomolecules", "Photosynthesis in Higher Plants", "Respiration in Plants"],
-        "Accountancy": ["Introduction to Accounting", "Theory Base of Accounting", "Recording of Transactions", "Bank Reconciliation Statement", "Trial Balance", "Depreciation", "Financial Statements"],
-        "Business Studies": ["Business, Trade and Commerce", "Forms of Business Organisations", "Private, Public and Global Enterprises", "Business Services", "Emerging Modes of Business", "Business Finance"],
-        "Economics": ["Introduction to Microeconomics", "Consumer's Equilibrium and Demand", "Producer Behaviour and Supply", "Collection of Data", "Measures of Central Tendency", "Correlation"],
-        "History": ["Writing and City Life", "An Empire Across Three Continents", "Nomadic Empires", "Changing Cultural Traditions", "Paths to Modernisation"],
-        "Political Science": ["Constitution: Why and How?", "Rights in the Indian Constitution", "Election and Representation", "Executive", "Legislature", "Judiciary", "Federalism", "Freedom", "Equality"],
-        "English Core": ["The Portrait of a Lady", "We're Not Afraid to Die", "Discovering Tut", "The Silk Road", "A Photograph", "The Voice of the Rain"],
-        "Hindi Core": ["नमक का दारोगा", "मियाँ नसीरुद्दीन", "अपु के साथ ढाई साल", "गलता लोहा", "कबीर के पद", "मीरा के पद"]
+        "Physics": ["Units and Measurements", "Motion in a Straight Line", "Laws of Motion", "Work, Energy and Power", "Gravitation"],
+        "Chemistry": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Chemical Bonding", "Thermodynamics", "Equilibrium"],
+        "Mathematics": ["Sets", "Relations and Functions", "Trigonometric Functions", "Complex Numbers", "Limits and Derivatives"],
+        "Biology": ["The Living World", "Biological Classification", "Cell: The Unit of Life"],
+        "Accountancy": ["Introduction to Accounting", "Theory Base of Accounting", "Recording of Transactions"],
+        "Business Studies": ["Business, Trade and Commerce", "Forms of Business Organisations"],
+        "Economics": ["Introduction to Microeconomics", "Consumer's Equilibrium and Demand", "Collection of Data"],
+        "English Core": ["The Portrait of a Lady", "We're Not Afraid to Die", "Discovering Tut"],
+        "Hindi Core": ["नमक का दारोगा", "मियाँ नसीरुद्दीन", "कबीर के पद"]
       },
       "12": {
-        "Physics": ["Electric Charges and Fields", "Electrostatic Potential and Capacitance", "Current Electricity", "Moving Charges and Magnetism", "Electromagnetic Induction", "Alternating Current", "Ray Optics", "Wave Optics", "Atoms", "Nuclei", "Semiconductors"],
-        "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "The d- and f-Block Elements", "Coordination Compounds", "Haloalkanes and Haloarenes", "Alcohols, Phenols and Ethers", "Aldehydes, Ketones and Carboxylic Acids", "Amines", "Biomolecules"],
-        "Mathematics": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Continuity and Differentiability", "Application of Derivatives", "Integrals", "Differential Equations", "Vector Algebra", "Three Dimensional Geometry", "Linear Programming", "Probability"],
-        "Biology": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Reproductive Health", "Principles of Inheritance", "Molecular Basis of Inheritance", "Evolution", "Human Health and Disease", "Biotechnology Principles", "Ecosystem"],
-        "Accountancy": ["Partnership Fundamentals", "Goodwill Valuation", "Admission of a Partner", "Retirement/Death of a Partner", "Dissolution of Partnership", "Company Accounts", "Financial Statements Analysis", "Cash Flow Statement"],
-        "Business Studies": ["Nature and Significance of Management", "Principles of Management", "Business Environment", "Planning", "Organising", "Staffing", "Directing", "Controlling", "Financial Management", "Marketing"],
-        "Economics": ["National Income Accounting", "Money and Banking", "Government Budget", "Open Economy Macroeconomics", "Development Experience (1947-90)", "Economic Reforms since 1991", "Current Challenges Facing Indian Economy"],
-        "History": ["Bricks, Beads and Bones", "Kings, Farmers and Towns", "Kinship, Caste and Class", "Thinkers, Beliefs and Buildings", "Bhakti-Sufi Traditions", "An Imperial Capital: Vijayanagara", "Mahatma Gandhi and Nationalist Movement"],
-        "Political Science": ["The End of Bipolarity", "Contemporary Centres of Power", "Contemporary South Asia", "International Organisations", "Challenges of Nation Building", "Era of One-Party Dominance", "Politics of Planned Development"],
-        "English Core": ["The Last Lesson", "Lost Spring", "Deep Water", "The Rattrap", "Indigo", "My Mother at Sixty-six", "Keeping Quiet", "The Third Level", "The Enemy"],
-        "Hindi Core": ["आत्मपरिचय / एक गीत", "पतंग", "कैमरे में बंद अपाहिज", "उषा", "भक्तिन", "बाज़ार दर्शन", "पहलवान की ढोलक", "श्रम विभाजन और जाति प्रथा"]
+        "Physics": ["Electric Charges and Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges and Magnetism", "Ray Optics", "Semiconductors"],
+        "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d- and f-Block Elements", "Coordination Compounds", "Organic Chemistry"],
+        "Mathematics": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Integrals", "Vectors"],
+        "Biology": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Genetics", "Biotechnology"],
+        "Accountancy": ["Partnership Fundamentals", "Share Capital", "Cash Flow Statement"],
+        "Business Studies": ["Nature and Significance of Management", "Principles of Management", "Marketing"],
+        "Economics": ["National Income Accounting", "Money and Banking", "Government Budget"],
+        "English Core": ["The Last Lesson", "Lost Spring", "Deep Water", "My Mother at Sixty-six"],
+        "Hindi Core": ["आत्मपरिचय", "पतंग", "भक्तिन", "बाज़ार दर्शन"]
       }
     };
 
@@ -353,7 +377,7 @@
       subSelect.innerHTML = "<option value=''>Select Subject</option>";
       chapSelect.innerHTML = "<option value=''>Select Chapter</option>";
       
-      if (academicMatrix[cls]) {
+      if (cls && academicMatrix[cls]) {
         Object.keys(academicMatrix[cls]).forEach(sub => {
           subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
         });
@@ -367,7 +391,7 @@
 
       chapSelect.innerHTML = "<option value=''>Select Chapter</option>";
 
-      if (academicMatrix[cls] && academicMatrix[cls][sub]) {
+      if (cls && sub && academicMatrix[cls] && academicMatrix[cls][sub]) {
         academicMatrix[cls][sub].forEach(chap => {
           chapSelect.innerHTML += `<option value="${chap}">${chap}</option>`;
         });
@@ -392,31 +416,31 @@
         <div>
           <h4>📌 NCERT Core Concepts & Key Definitions</h4>
           <ul>
-            <li><strong>Fundamental Principle:</strong> Comprehensive overview of primary theorems, principles, and concepts for ${chap}.</li>
-            <li><strong>Key Assumptions & Rules:</strong> Governing rules, historical context, and scientific laws required by the CBSE marking scheme.</li>
+            <li><strong>Fundamental Principle:</strong> Comprehensive overview of primary theorems and definitions for ${chap}.</li>
+            <li><strong>Key Rules:</strong> Important formulas, historical facts, and scientific principles required for CBSE scoring.</li>
           </ul>
         </div>
 
         <div class="formula-box">
-          <h4>⚡ High-Yield Formulae / Important Terms</h4>
-          <p>• <strong>Primary Formula / Equation:</strong> Core relationship equations applicable to numerical and theoretical questions.</p>
-          <p>• <strong>Secondary Relation:</strong> Unit conversions, mathematical derivations, or specific grammar/textual principles.</p>
+          <h4>⚡ High-Yield Formulae / Key Vocabulary</h4>
+          <p>• Primary Equation / Rule: Core relationship expressions for ${chap}.</p>
+          <p>• Units / Terminology: Standard SI units and technical definitions.</p>
         </div>
 
         <div>
-          <h4>🔥 High-Probability Board & School Exam Questions</h4>
+          <h4>🔥 High-Probability Board Exam Questions</h4>
           <ul>
-            <li><strong>Short Answer (2 Marks):</strong> Standard definition and concept identification questions frequently asked in past year papers.</li>
-            <li><strong>Long Answer (5 Marks):</strong> Step-by-step analytical derivation, process diagram, or detailed contextual explanation.</li>
+            <li><strong>Short Answer (2 Marks):</strong> Standard conceptual definitions from past board exams.</li>
+            <li><strong>Long Answer (5 Marks):</strong> Step-by-step derivations and structured explanations.</li>
           </ul>
         </div>
       `;
     }
 
     function generateSolution() {
-      const question = document.getElementById("userQuestion").value.trim();
+      const q = document.getElementById("userQuestion").value.trim();
 
-      if (!question) {
+      if (!q) {
         alert("Please enter or paste a question first!");
         return;
       }
@@ -424,15 +448,76 @@
       document.getElementById("solutionOutput").style.display = "block";
       document.getElementById("solutionText").innerHTML = `
         <h4 style="color: #0066cc; margin-bottom: 5px;">Question Analysis & CBSE Marking Scheme Solution</h4>
-        <p style="background: #f4f4f4; padding: 10px; border-radius: 4px;"><strong>Question:</strong> "${question}"</p>
+        <p style="background: #f4f4f4; padding: 10px; border-radius: 4px;"><strong>Question:</strong> "${q}"</p>
         <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
-        <p><strong>Step 1 (Given & Governing Rule):</strong> Identify known values, underlying laws, or grammatical rules applicable to the query [1 Mark].</p>
-        <p><strong>Step 2 (Execution / Step-by-Step Derivation):</strong> Apply mathematical substitution, process derivation, or structural explanation [2 Marks].</p>
-        <p><strong>Step 3 (Final Answer & Conclusion):</strong> Conclude with exact units, final evaluation, or summary statement [1 Mark].</p>
+        <p><strong>Step 1 (Given & Governing Formula):</strong> Identify standard properties, equations, or definitions relevant to the query [1 Mark].</p>
+        <p><strong>Step 2 (Step-by-Step Derivation / Logic):</strong> Perform numerical substitution, dimensional analysis, or step-by-step reasoning [2 Marks].</p>
+        <p><strong>Step 3 (Final Evaluated Answer):</strong> Conclude with precise units and summary statement [1 Mark].</p>
       `;
     }
 
-    // Backend Cloud Function Handler
+    /* Execute PYQ Search via Custom Button */
+    function executePyqSearch() {
+      const query = document.getElementById("pyqCustomInput").value.trim();
+      if (!query) {
+        alert("Please enter a search term first!");
+        return;
+      }
+      const element = google.search.cse.element.getElement('gsearch');
+      if (element) {
+        element.execute(query);
+      } else {
+        const gcseInput = document.querySelector('.gsc-input input');
+        if (gcseInput) {
+          gcseInput.value = query;
+          const gcseBtn = document.querySelector('.gsc-search-button button');
+          if (gcseBtn) gcseBtn.click();
+        }
+      }
+    }
+
+    /* Fallback Local PDF Assessment Generator */
+    function generateLocalAssessment(classNum, selectedSubjects, chapterInput) {
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>CBSE Class ${classNum} ${selectedSubjects.join(' & ')} Assessment</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; }
+              .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+              .meta { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 30px; }
+              .section { margin-bottom: 25px; }
+              .q-item { margin-bottom: 15px; }
+            </style>
+          </head>
+          <body>
+            <div class="header">
+              <h2>CBSE PRACTICE ASSESSMENT PAPER</h2>
+              <h3>Class ${classNum} — ${selectedSubjects.join(' & ')}</h3>
+              <p>Topic(s): ${chapterInput}</p>
+            </div>
+            <div class="meta">
+              <span>Time: 3 Hours</span>
+              <span>Max Marks: 80</span>
+            </div>
+            <div class="section">
+              <h4>SECTION A — Short Answer Questions (2 Marks each)</h4>
+              <p class="q-item">1. Define the fundamental principles associated with <strong>${chapterInput}</strong>. [2 Marks]</p>
+              <p class="q-item">2. State the key mathematical/scientific relation used in <strong>${chapterInput}</strong>. [2 Marks]</p>
+            </div>
+            <div class="section">
+              <h4>SECTION B — Long Answer & Analytical Questions (5 Marks each)</h4>
+              <p class="q-item">3. Derive and explain in detail the complete process/formula governing <strong>${chapterInput}</strong>. Include neat diagrams where applicable. [5 Marks]</p>
+            </div>
+            <script>window.print();<\/script>
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+    }
+
+    // Backend Cloud Function Handler with Automatic Local Fallback
     document.getElementById('paperForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -449,7 +534,7 @@
 
       submitBtn.disabled = true;
       submitBtn.textContent = 'Generating PDF...';
-      statusDiv.textContent = 'Contacting AI backend and formatting PDF layout (10-15s)...';
+      statusDiv.textContent = 'Contacting AI backend...';
 
       try {
         const response = await fetch(ENDPOINT, {
@@ -478,7 +563,9 @@
 
         statusDiv.textContent = '✅ PDF downloaded successfully!';
       } catch (err) {
-        statusDiv.textContent = `❌ Error: ${err.message}`;
+        console.warn("Cloud function unavailable, launching local printable assessment fallback:", err.message);
+        statusDiv.textContent = '⚠️ Cloud endpoint unavailable. Opening printable assessment window...';
+        generateLocalAssessment(classNum, selectedSubjects, chapterInput);
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Generate Assessment PDF';
