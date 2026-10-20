@@ -13,6 +13,10 @@
   <meta name="keywords" content="CBSE Class 10 practice paper, Class 12 Physics notes, CBSE PYQ search, Class 11 Chemistry solution, Hindi Course A papers">
   <meta name="robots" content="index, follow">
 
+  <!-- Markdown Parser & PDF Generator Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
   <!-- Google Programmable Search Engine Script -->
   <script async src="https://cse.google.com/cse.js?cx=34f282ed047b24aa6"></script>
 
@@ -20,6 +24,7 @@
     :root {
       --primary-color: #0066cc;
       --primary-hover: #004c99;
+      --bg-color: #ffffff;
       --border-color: #ddd;
     }
 
@@ -59,13 +64,8 @@
       border-bottom: 3px solid var(--primary-color); 
     }
 
-    .section-box { 
-      display: none !important; 
-    }
-    
-    .section-box.active { 
-      display: block !important; 
-    }
+    .section-box { display: none; }
+    .section-box.active { display: block; }
 
     /* Form Layouts */
     .form-group { margin-bottom: 20px; }
@@ -91,7 +91,7 @@
 
     .checkbox-grid label { font-weight: normal; cursor: pointer; margin: 0; }
 
-    .action-btn { 
+    button { 
       background-color: var(--primary-color); 
       color: white; 
       border: none; 
@@ -103,53 +103,28 @@
       font-weight: bold; 
     }
 
-    .action-btn:hover { background-color: var(--primary-hover); }
-    .action-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+    button:hover { background-color: var(--primary-hover); }
+    button:disabled { background-color: #cccccc; cursor: not-allowed; }
     
-    #status { margin-top: 15px; font-weight: bold; text-align: center; }
+    .status-msg { margin-top: 15px; font-weight: bold; text-align: center; }
 
-    /* Custom PYQ Search Container */
-    .pyq-search-box {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
+    /* PDF Wrapper Layout */
+    .cbse-pdf-paper {
+      background: #fff;
+      padding: 25px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
     }
+    .cbse-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+    .cbse-header h2 { margin: 0; font-size: 18px; color: #1A365D; }
+    .cbse-header p { margin: 5px 0 0; font-weight: bold; font-size: 14px; }
+    .cbse-meta { display: flex; justify-content: space-between; font-weight: bold; font-size: 13px; margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 8px; }
+    .svg-diagram-container { text-align: center; margin: 15px 0; }
 
-    .pyq-search-btn {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .pyq-search-btn:hover {
-      background-color: var(--primary-hover);
-    }
-
-    /* Output Cards */
-    .output-card {
-      margin-top: 25px;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      background: #fdfdfd;
-    }
-
-    .formula-box {
-      background: #eef3fc;
-      border-left: 4px solid var(--primary-color);
-      padding: 12px;
-      margin: 15px 0;
-    }
-
+    /* Print Formatting */
     @media print {
-      .tab-container, .action-btn, footer, .gcse-search, .form-group, .pyq-search-box { display: none !important; }
+      .tab-container, button, footer, .gcse-search, .form-group, .status-msg { display: none !important; }
       body { max-width: 100%; margin: 0; padding: 0; }
-      .output-card { border: none; padding: 0; }
     }
   </style>
 </head>
@@ -171,106 +146,85 @@
       <div class="form-group">
         <label for="classSelect">Select Class:</label>
         <select id="classSelect" onchange="updateGeneratorSubjects()">
-          <option value="6">CBSE Class 6</option>
-          <option value="7">CBSE Class 7</option>
-          <option value="8">CBSE Class 8</option>
-          <option value="9">CBSE Class 9</option>
-          <option value="10" selected>CBSE Class 10</option>
-          <option value="11">CBSE Class 11</option>
-          <option value="12">CBSE Class 12</option>
+          <option value="Class 6">CBSE Class 6</option>
+          <option value="Class 7">CBSE Class 7</option>
+          <option value="Class 8">CBSE Class 8</option>
+          <option value="Class 9">CBSE Class 9</option>
+          <option value="Class 10" selected>CBSE Class 10</option>
+          <option value="Class 11">CBSE Class 11</option>
+          <option value="Class 12">CBSE Class 12</option>
         </select>
       </div>
 
       <div class="form-group">
         <label>Select Subject(s):</label>
-        <div class="checkbox-grid" id="subjectContainer">
-          <!-- Injected via JS -->
-        </div>
+        <div class="checkbox-grid" id="subjectContainer"></div>
       </div>
 
       <div class="form-group">
         <label for="chapter">Chapter Name(s) / Topics:</label>
-        <input type="text" id="chapter" placeholder="e.g., Quadratic Equations, Light, Electrochemistry" required>
-        <small style="color: #666;">Separate multiple chapters with commas.</small>
+        <input type="text" id="chapter" placeholder="e.g., Electric Charges, Electrochemistry, Light" required>
       </div>
 
-      <button type="submit" id="submitBtn" class="action-btn">Generate Assessment PDF</button>
+      <button type="submit" id="submitBtn">Generate Assessment PDF</button>
     </form>
-    <div id="status"></div>
+    <div id="status" class="status-msg"></div>
   </div>
 
   <!-- TAB 2: Chapter Notes Generator -->
   <div id="notes" class="section-box">
     <div class="form-group">
-      <label for="notesClass">Class:</label>
+      <label for="notesClass">Select Class:</label>
       <select id="notesClass" onchange="loadNotesSubjects()">
         <option value="">Select Class</option>
-        <option value="6">Class 6</option>
-        <option value="7">Class 7</option>
-        <option value="8">Class 8</option>
-        <option value="9">Class 9</option>
-        <option value="10">Class 10</option>
-        <option value="11">Class 11</option>
-        <option value="12">Class 12</option>
+        <option value="Class 6">Class 6</option>
+        <option value="Class 7">Class 7</option>
+        <option value="Class 8">Class 8</option>
+        <option value="Class 9">Class 9</option>
+        <option value="Class 10">Class 10</option>
+        <option value="Class 11">Class 11</option>
+        <option value="Class 12">Class 12</option>
       </select>
     </div>
 
     <div class="form-group">
       <label for="notesSubject">Subject:</label>
-      <select id="notesSubject" onchange="loadNotesChapters()">
+      <select id="notesSubject">
         <option value="">Select Subject</option>
       </select>
     </div>
 
     <div class="form-group">
-      <label for="notesChapter">Chapter:</label>
-      <select id="notesChapter">
-        <option value="">Select Chapter</option>
-      </select>
+      <label for="notesChapterInput">Chapter Name:</label>
+      <input type="text" id="notesChapterInput" placeholder="e.g., Solutions, Light Reflection, Real Numbers">
     </div>
 
-    <button type="button" class="action-btn" onclick="generateChapterNotes()">Generate Chapter Revision Notes</button>
-
-    <div id="notesOutput" class="output-card" style="display:none;">
-      <div style="text-align: right; margin-bottom: 10px;">
-        <button onclick="window.print()" style="width: auto; padding: 6px 12px; cursor: pointer;">🖨️ Print / Save PDF</button>
-      </div>
-      <div id="notesContent"></div>
-    </div>
+    <button type="button" id="notesBtn" onclick="generateChapterNotes()">Generate Chapter Revision Notes PDF</button>
+    <div id="notesStatus" class="status-msg"></div>
   </div>
 
   <!-- TAB 3: Instant Solution Resolver -->
   <div id="resolver" class="section-box">
     <div class="form-group">
       <label for="userQuestion">Type or Paste Any Question (Class 6-12):</label>
-      <textarea id="userQuestion" rows="5" placeholder="e.g., Calculate capital G in SI unit using dimensions..."></textarea>
+      <textarea id="userQuestion" rows="5" placeholder="e.g., Derive electric field due to a dipole, or Explain the concept of National Income..."></textarea>
     </div>
 
-    <button type="button" class="action-btn" onclick="generateSolution()">Get CBSE Marking Scheme Solution</button>
-
-    <div id="solutionOutput" class="output-card" style="display:none;">
-      <div id="solutionText"></div>
-    </div>
+    <button type="button" id="resolverBtn" onclick="generateSolution()">Solve & Download Solution PDF</button>
+    <div id="resolverStatus" class="status-msg"></div>
   </div>
 
   <!-- TAB 4: Google Custom Search for Official PYQs -->
   <div id="pyq" class="section-box">
-    <p style="text-align: center; color: #555; margin-bottom: 15px;">
+    <p style="text-align: center; color: #555; margin-bottom: 10px;">
       Search official CBSE archives (cbseacademic.nic.in) directly for past papers & marking schemes:
     </p>
-
-    <!-- Custom Search Input with Explicit Search Button -->
-    <div class="pyq-search-box">
-      <input type="text" id="pyqCustomInput" placeholder="e.g., Class 10 Science Board Paper 2023" onkeypress="if(event.key==='Enter') executePyqSearch()">
-      <button type="button" class="pyq-search-btn" onclick="executePyqSearch()">🔍 Search Official Archives</button>
-    </div>
-
-    <!-- Google Custom Search Engine Container -->
     <div class="gcse-search"></div>
+  </div>
 
-    <p style="text-align: center; font-size: 13px; color: #777; margin-top: 12px;">
-      <em>Try searching: "Class 12 Physics 2024 PYQ", "Class 10 Mathematics 2023 Board Paper", or "Class 10 SQP"</em>
-    </p>
+  <!-- Hidden Printable PDF Container -->
+  <div id="outputContainer" style="display:none;">
+    <div id="paperContent"></div>
   </div>
 
   <!-- Footer -->
@@ -287,66 +241,14 @@
   <script>
     const ENDPOINT = "https://us-central1-glassy-emblem-424602-q0.cloudfunctions.net/cbse-pdf-service";
 
-    const academicMatrix = {
-      "6": {
-        "Mathematics": ["Knowing Our Numbers", "Whole Numbers", "Playing with Numbers", "Integers", "Fractions", "Decimals"],
-        "Science": ["Components of Food", "Sorting Materials into Groups", "Separation of Substances", "Getting to Know Plants"],
-        "Social Science": ["What, Where, How and When?", "From Gathering to Growing Food", "Globe: Latitudes and Longitudes"],
-        "English": ["A Different Kind of School", "Who I Am", "Fair Play"],
-        "Hindi": ["वह चिड़िया जो", "बचपन", "नादान दोस्त"]
-      },
-      "7": {
-        "Mathematics": ["Integers", "Fractions and Decimals", "Data Handling", "Simple Equations", "Lines and Angles"],
-        "Science": ["Nutrition in Plants", "Nutrition in Animals", "Heat", "Acids, Bases and Salts"],
-        "Social Science": ["Tracing Changes Through a Thousand Years", "New Kings and Kingdoms", "Environment"],
-        "English": ["Three Questions", "A Gift of Chappals", "Quality"],
-        "Hindi": ["हम पंछी उन्मुक्त गगन के", "दादी माँ", "हिमालय की बेटियाँ"]
-      },
-      "8": {
-        "Mathematics": ["Rational Numbers", "Linear Equations in One Variable", "Understanding Quadrilaterals", "Square and Square Roots"],
-        "Science": ["Crop Production and Management", "Microorganisms", "Coal and Petroleum", "Combustion and Flame"],
-        "Social Science": ["How, When and Where", "From Trade to Territory", "Resources"],
-        "English": ["The Best Christmas Present in the World", "The Tsunami"],
-        "Hindi": ["ध्वनि", "लाख की चूड़ियाँ", "बस की यात्रा"]
-      },
-      "9": {
-        "Mathematics": ["Number Systems", "Polynomials", "Coordinate Geometry", "Linear Equations in Two Variables", "Triangles"],
-        "Science": ["Matter in Our Surroundings", "Is Matter Around Us Pure?", "Atoms and Molecules", "Cell: Unit of Life", "Motion"],
-        "Social Science": ["The French Revolution", "Socialism in Europe", "India - Size and Location"],
-        "English": ["The Fun They Had", "The Sound of Music", "The Little Girl"],
-        "Hindi Course A": ["दो बैलों की कथा", "ल्हासा की ओर", "कबीर - साखियाँ एवं सबद"],
-        "Hindi Course B": ["धूल", "दुःख का अधिकार", "रहीम के दोहे"]
-      },
-      "10": {
-        "Mathematics": ["Real Numbers", "Polynomials", "Pair of Linear Equations", "Quadratic Equations", "Arithmetic Progressions", "Triangles", "Trigonometry"],
-        "Science": ["Chemical Reactions and Equations", "Acids, Bases and Salts", "Metals and Non-metals", "Life Processes", "Light - Reflection and Refraction", "Electricity"],
-        "Social Science": ["The Rise of Nationalism in Europe", "Nationalism in India", "Resources and Development", "Power Sharing"],
-        "English": ["A Letter to God", "Nelson Mandela: Long Walk to Freedom", "Two Stories About Flying"],
-        "Hindi Course A": ["नेताजी का चश्मा", "बालगोबिन भगत", "सूरदास के पद"],
-        "Hindi Course B": ["बड़े भाई साहब", "डायरी का एक पन्ना", "साखी - कबीर"]
-      },
-      "11": {
-        "Physics": ["Units and Measurements", "Motion in a Straight Line", "Laws of Motion", "Work, Energy and Power", "Gravitation"],
-        "Chemistry": ["Some Basic Concepts of Chemistry", "Structure of Atom", "Chemical Bonding", "Thermodynamics", "Equilibrium"],
-        "Mathematics": ["Sets", "Relations and Functions", "Trigonometric Functions", "Complex Numbers", "Limits and Derivatives"],
-        "Biology": ["The Living World", "Biological Classification", "Cell: The Unit of Life"],
-        "Accountancy": ["Introduction to Accounting", "Theory Base of Accounting", "Recording of Transactions"],
-        "Business Studies": ["Business, Trade and Commerce", "Forms of Business Organisations"],
-        "Economics": ["Introduction to Microeconomics", "Consumer's Equilibrium and Demand", "Collection of Data"],
-        "English Core": ["The Portrait of a Lady", "We're Not Afraid to Die", "Discovering Tut"],
-        "Hindi Core": ["नमक का दारोगा", "मियाँ नसीरुद्दीन", "कबीर के पद"]
-      },
-      "12": {
-        "Physics": ["Electric Charges and Fields", "Electrostatic Potential", "Current Electricity", "Moving Charges and Magnetism", "Ray Optics", "Semiconductors"],
-        "Chemistry": ["Solutions", "Electrochemistry", "Chemical Kinetics", "d- and f-Block Elements", "Coordination Compounds", "Organic Chemistry"],
-        "Mathematics": ["Relations and Functions", "Inverse Trigonometric Functions", "Matrices", "Determinants", "Integrals", "Vectors"],
-        "Biology": ["Sexual Reproduction in Flowering Plants", "Human Reproduction", "Genetics", "Biotechnology"],
-        "Accountancy": ["Partnership Fundamentals", "Share Capital", "Cash Flow Statement"],
-        "Business Studies": ["Nature and Significance of Management", "Principles of Management", "Marketing"],
-        "Economics": ["National Income Accounting", "Money and Banking", "Government Budget"],
-        "English Core": ["The Last Lesson", "Lost Spring", "Deep Water", "My Mother at Sixty-six"],
-        "Hindi Core": ["आत्मपरिचय", "पतंग", "भक्तिन", "बाज़ार दर्शन"]
-      }
+    const subjectData = {
+      "Class 6": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+      "Class 7": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+      "Class 8": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+      "Class 9": ["Mathematics", "Science", "Social Science", "English", "Hindi Course A", "Hindi Course B"],
+      "Class 10": ["Mathematics", "Science", "Social Science", "English", "Hindi Course A", "Hindi Course B"],
+      "Class 11": ["Physics", "Chemistry", "Mathematics", "Biology", "Accountancy", "Business Studies", "Economics", "English Core"],
+      "Class 12": ["Physics", "Chemistry", "Mathematics", "Biology", "Accountancy", "Business Studies", "Economics", "English Core"]
     };
 
     function switchTab(evt, tabId) {
@@ -361,8 +263,8 @@
       const container = document.getElementById("subjectContainer");
       container.innerHTML = "";
       
-      if (academicMatrix[cls]) {
-        Object.keys(academicMatrix[cls]).forEach((sub, idx) => {
+      if (subjectData[cls]) {
+        subjectData[cls].forEach((sub, idx) => {
           const checked = idx === 0 ? "checked" : "";
           container.innerHTML += `<label><input type="checkbox" name="subject" value="${sub}" ${checked}> ${sub}</label>`;
         });
@@ -372,158 +274,84 @@
     function loadNotesSubjects() {
       const cls = document.getElementById("notesClass").value;
       const subSelect = document.getElementById("notesSubject");
-      const chapSelect = document.getElementById("notesChapter");
-
       subSelect.innerHTML = "<option value=''>Select Subject</option>";
-      chapSelect.innerHTML = "<option value=''>Select Chapter</option>";
       
-      if (cls && academicMatrix[cls]) {
-        Object.keys(academicMatrix[cls]).forEach(sub => {
+      if (subjectData[cls]) {
+        subjectData[cls].forEach(sub => {
           subSelect.innerHTML += `<option value="${sub}">${sub}</option>`;
         });
       }
     }
 
-    function loadNotesChapters() {
-      const cls = document.getElementById("notesClass").value;
-      const sub = document.getElementById("notesSubject").value;
-      const chapSelect = document.getElementById("notesChapter");
+    async function sendBackendRequest(payload, statusDiv, btnElement, titleHeader, fileName) {
+      btnElement.disabled = true;
+      statusDiv.textContent = "Connecting to Gemini AI backend (10-15s)...";
 
-      chapSelect.innerHTML = "<option value=''>Select Chapter</option>";
-
-      if (cls && sub && academicMatrix[cls] && academicMatrix[cls][sub]) {
-        academicMatrix[cls][sub].forEach(chap => {
-          chapSelect.innerHTML += `<option value="${chap}">${chap}</option>`;
+      try {
+        const response = await fetch(ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
         });
-      }
-    }
 
-    function generateChapterNotes() {
-      const cls = document.getElementById("notesClass").value;
-      const sub = document.getElementById("notesSubject").value;
-      const chap = document.getElementById("notesChapter").value;
+        const data = await response.json();
 
-      if (!cls || !sub || !chap) {
-        alert("Please select Class, Subject, and Chapter!");
-        return;
-      }
+        if (response.ok && data.result) {
+          statusDiv.textContent = "Formatting document layout and generating PDF...";
 
-      document.getElementById("notesOutput").style.display = "block";
-      document.getElementById("notesContent").innerHTML = `
-        <h2 style="color: #0066cc; border-bottom: 2px solid #0066cc; padding-bottom: 5px;">Class ${cls} ${sub} — Revision Notes</h2>
-        <h3 style="color: #444; margin-top: 5px;">Chapter: ${chap}</h3>
-        
-        <div>
-          <h4>📌 NCERT Core Concepts & Key Definitions</h4>
-          <ul>
-            <li><strong>Fundamental Principle:</strong> Comprehensive overview of primary theorems and definitions for ${chap}.</li>
-            <li><strong>Key Rules:</strong> Important formulas, historical facts, and scientific principles required for CBSE scoring.</li>
-          </ul>
-        </div>
+          let cleanText = data.result;
+          cleanText = cleanText.replace(/\$([^\$]+)\$/g, '$1');
+          cleanText = cleanText.replace(/([a-zA-Z0-9\)]+)\^([0-9a-zA-Z\+\-]+)/g, '$1<sup>$2</sup>');
 
-        <div class="formula-box">
-          <h4>⚡ High-Yield Formulae / Key Vocabulary</h4>
-          <p>• Primary Equation / Rule: Core relationship expressions for ${chap}.</p>
-          <p>• Units / Terminology: Standard SI units and technical definitions.</p>
-        </div>
+          let parsedHtml = marked.parse(cleanText);
 
-        <div>
-          <h4>🔥 High-Probability Board Exam Questions</h4>
-          <ul>
-            <li><strong>Short Answer (2 Marks):</strong> Standard conceptual definitions from past board exams.</li>
-            <li><strong>Long Answer (5 Marks):</strong> Step-by-step derivations and structured explanations.</li>
-          </ul>
-        </div>
-      `;
-    }
+          parsedHtml = parsedHtml.replace(/<pre><code class="(?:language-)?(?:xml|html|svg)">([\s\S]*?)<\/code><\/pre>|```(?:xml|html|svg)?\s*(<svg[\s\S]*?<\/svg>)\s*```|(<svg[\s\S]*?<\/svg>)/gi, function(match, codeBlockContent, backtickSvg, rawSvg) {
+            let svgContent = codeBlockContent || backtickSvg || rawSvg;
+            svgContent = svgContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+            return `<div class="svg-diagram-container">${svgContent}</div>`;
+          });
 
-    function generateSolution() {
-      const q = document.getElementById("userQuestion").value.trim();
+          const paperContent = document.getElementById("paperContent");
+          paperContent.innerHTML = `
+            <div class="cbse-pdf-paper" id="pdfWrapper">
+              <div class="cbse-header">
+                <h2>CENTRAL BOARD OF SECONDARY EDUCATION</h2>
+                <p>${payload.class_level.toUpperCase()} ${titleHeader}</p>
+              </div>
+              <div class="cbse-meta">
+                <span>Subject(s): ${payload.subjects.join(", ")}</span>
+                <span>Topic/Chapter: ${payload.chapter || "General"}</span>
+              </div>
+              <div class="paper-body">${parsedHtml}</div>
+            </div>
+          `;
 
-      if (!q) {
-        alert("Please enter or paste a question first!");
-        return;
-      }
+          const opt = {
+            margin: [8, 8, 8, 8],
+            filename: fileName,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+          };
 
-      document.getElementById("solutionOutput").style.display = "block";
-      document.getElementById("solutionText").innerHTML = `
-        <h4 style="color: #0066cc; margin-bottom: 5px;">Question Analysis & CBSE Marking Scheme Solution</h4>
-        <p style="background: #f4f4f4; padding: 10px; border-radius: 4px;"><strong>Question:</strong> "${q}"</p>
-        <hr style="border: 0; border-top: 1px solid #ddd; margin: 15px 0;">
-        <p><strong>Step 1 (Given & Governing Formula):</strong> Identify standard properties, equations, or definitions relevant to the query [1 Mark].</p>
-        <p><strong>Step 2 (Step-by-Step Derivation / Logic):</strong> Perform numerical substitution, dimensional analysis, or step-by-step reasoning [2 Marks].</p>
-        <p><strong>Step 3 (Final Evaluated Answer):</strong> Conclude with precise units and summary statement [1 Mark].</p>
-      `;
-    }
-
-    /* Execute PYQ Search via Custom Button */
-    function executePyqSearch() {
-      const query = document.getElementById("pyqCustomInput").value.trim();
-      if (!query) {
-        alert("Please enter a search term first!");
-        return;
-      }
-      const element = google.search.cse.element.getElement('gsearch');
-      if (element) {
-        element.execute(query);
-      } else {
-        const gcseInput = document.querySelector('.gsc-input input');
-        if (gcseInput) {
-          gcseInput.value = query;
-          const gcseBtn = document.querySelector('.gsc-search-button button');
-          if (gcseBtn) gcseBtn.click();
+          await html2pdf().set(opt).from(document.getElementById("pdfWrapper")).save();
+          statusDiv.textContent = "✅ PDF downloaded successfully!";
+        } else {
+          statusDiv.textContent = "❌ Error: " + (data.error || "Failed to generate content.");
         }
+      } catch (err) {
+        statusDiv.textContent = "❌ Network Error: " + err.message;
+      } finally {
+        btnElement.disabled = false;
       }
     }
 
-    /* Fallback Local PDF Assessment Generator */
-    function generateLocalAssessment(classNum, selectedSubjects, chapterInput) {
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>CBSE Class ${classNum} ${selectedSubjects.join(' & ')} Assessment</title>
-            <style>
-              body { font-family: Arial, sans-serif; padding: 40px; line-height: 1.6; }
-              .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
-              .meta { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 30px; }
-              .section { margin-bottom: 25px; }
-              .q-item { margin-bottom: 15px; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <h2>CBSE PRACTICE ASSESSMENT PAPER</h2>
-              <h3>Class ${classNum} — ${selectedSubjects.join(' & ')}</h3>
-              <p>Topic(s): ${chapterInput}</p>
-            </div>
-            <div class="meta">
-              <span>Time: 3 Hours</span>
-              <span>Max Marks: 80</span>
-            </div>
-            <div class="section">
-              <h4>SECTION A — Short Answer Questions (2 Marks each)</h4>
-              <p class="q-item">1. Define the fundamental principles associated with <strong>${chapterInput}</strong>. [2 Marks]</p>
-              <p class="q-item">2. State the key mathematical/scientific relation used in <strong>${chapterInput}</strong>. [2 Marks]</p>
-            </div>
-            <div class="section">
-              <h4>SECTION B — Long Answer & Analytical Questions (5 Marks each)</h4>
-              <p class="q-item">3. Derive and explain in detail the complete process/formula governing <strong>${chapterInput}</strong>. Include neat diagrams where applicable. [5 Marks]</p>
-            </div>
-            <script>window.print();<\/script>
-          </body>
-        </html>
-      `);
-      printWindow.document.close();
-    }
-
-    // Backend Cloud Function Handler with Automatic Local Fallback
+    // Tab 1: Test Paper Submit Handler
     document.getElementById('paperForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      const classNum = document.getElementById('classSelect').value;
+      const classVal = document.getElementById('classSelect').value;
       const selectedSubjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(cb => cb.value);
-      const chapterInput = document.getElementById('chapter').value.trim();
+      const chapterVal = document.getElementById('chapter').value.trim();
       const submitBtn = document.getElementById('submitBtn');
       const statusDiv = document.getElementById('status');
 
@@ -532,47 +360,61 @@
         return;
       }
 
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Generating PDF...';
-      statusDiv.textContent = 'Contacting AI backend...';
+      const payload = {
+        class_level: classVal,
+        subjects: selectedSubjects,
+        mode: "custom",
+        chapter: chapterVal,
+        max_marks: "80"
+      };
 
-      try {
-        const response = await fetch(ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            class: classNum,
-            subject: selectedSubjects.join(" & "), 
-            chapter: chapterInput, 
-            marks: "80", 
-            time: "3 Hours" 
-          })
-        });
-
-        if (!response.ok) throw new Error(`Server returned HTTP ${response.status}`);
-
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = `CBSE_Class_${classNum}_${selectedSubjects.join('_')}_${chapterInput.replace(/ /g, '_')}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(downloadUrl);
-
-        statusDiv.textContent = '✅ PDF downloaded successfully!';
-      } catch (err) {
-        console.warn("Cloud function unavailable, launching local printable assessment fallback:", err.message);
-        statusDiv.textContent = '⚠️ Cloud endpoint unavailable. Opening printable assessment window...';
-        generateLocalAssessment(classNum, selectedSubjects, chapterInput);
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Generate Assessment PDF';
-      }
+      await sendBackendRequest(payload, statusDiv, submitBtn, "PRACTICE ASSESSMENT", `${classVal}_Practice_Paper.pdf`);
     });
 
-    // Initialize Test Generator options on page load
+    // Tab 2: Chapter Notes Handler
+    async function generateChapterNotes() {
+      const classVal = document.getElementById("notesClass").value;
+      const subVal = document.getElementById("notesSubject").value;
+      const chapVal = document.getElementById("notesChapterInput").value.trim();
+      const notesBtn = document.getElementById("notesBtn");
+      const statusDiv = document.getElementById("notesStatus");
+
+      if (!classVal || !subVal || !chapVal) {
+        alert("Please fill in Class, Subject, and Chapter Name!");
+        return;
+      }
+
+      const payload = {
+        class_level: classVal,
+        subjects: [subVal],
+        mode: "notes",
+        chapter: chapVal
+      };
+
+      await sendBackendRequest(payload, statusDiv, notesBtn, "CHAPTER REVISION NOTES", `${classVal}_${subVal}_Notes.pdf`);
+    }
+
+    // Tab 3: Solution Resolver Handler
+    async function generateSolution() {
+      const qVal = document.getElementById("userQuestion").value.trim();
+      const resolverBtn = document.getElementById("resolverBtn");
+      const statusDiv = document.getElementById("resolverStatus");
+
+      if (!qVal) {
+        alert("Please type or paste a question first!");
+        return;
+      }
+
+      const payload = {
+        class_level: "Class 10",
+        subjects: ["General Curriculum"],
+        mode: "solver",
+        custom_question: qVal
+      };
+
+      await sendBackendRequest(payload, statusDiv, resolverBtn, "SOLVER & MARKING SCHEME", "CBSE_Solution.pdf");
+    }
+
     updateGeneratorSubjects();
   </script>
 </body>
