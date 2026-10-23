@@ -398,7 +398,7 @@
       }
     }
 
-    // Main single function that handles backend calls, rendering, and smooth PDF download
+    // Main backend communication and PDF export handler
     async function sendBackendRequest(payload, statusDiv, btnElement, loaderElement, loaderTextElement, titleHeader, fileName) {
       btnElement.disabled = true;
       loaderElement.style.display = "flex";
@@ -418,11 +418,21 @@
           loaderTextElement.textContent = "Formatting A4 Pages & Preparing Document...";
 
           let cleanText = data.result;
-          cleanText = cleanText.replace(/\$([^\$]+)\$/g, '$1');
+
+          // 1. Sanitize LaTeX syntax and prevent Markdown multiplication glitch
+          cleanText = cleanText.replace(/\\times/g, ' × ');
+          cleanText = cleanText.replace(/\\div/g, ' ÷ ');
+          cleanText = cleanText.replace(/\\rightarrow/g, ' → ');
+
+          // 2. Format superscripts and subscripts cleanly
+          cleanText = cleanText.replace(/\$\$([^\$]+)\$\$/g, '<div style="text-align:center;margin:10px 0;font-weight:bold;">$1</div>');
+          cleanText = cleanText.replace(/\$([^\$]+)\$/g, '<span>$1</span>');
           cleanText = cleanText.replace(/([a-zA-Z0-9\)]+)\^([0-9a-zA-Z\+\-]+)/g, '$1<sup>$2</sup>');
+          cleanText = cleanText.replace(/([a-zA-Z0-9\)]+)_([0-9a-zA-Z\+\-]+)/g, '$1<sub>$2</sub>');
 
           let parsedHtml = marked.parse(cleanText);
 
+          // 3. Render raw SVG diagrams seamlessly
           parsedHtml = parsedHtml.replace(/<pre><code class="(?:language-)?(?:xml|html|svg)">([\s\S]*?)<\/code><\/pre>|```(?:xml|html|svg)?\s*(<svg[\s\S]*?<\/svg>)\s*```|(<svg[\s\S]*?<\/svg>)/gi, function(match, codeBlockContent, backtickSvg, rawSvg) {
             let svgContent = codeBlockContent || backtickSvg || rawSvg;
             svgContent = svgContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
@@ -444,7 +454,7 @@
             </div>
           `;
 
-          // Optimized scale: 1.5 to prevent system memory lock / mouse freeze
+          // Scale 1.5 prevents thread locking and mouse cursor freezing
           const opt = {
             margin:       0,
             filename:     fileName,
@@ -454,7 +464,7 @@
             pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
           };
 
-          // Generate PDF using Blob output to avoid Windows dialog thread freezing
+          // Generate PDF via Blob URL for smooth native download
           const worker = html2pdf().set(opt).from(document.getElementById("pdfWrapper"));
           const pdfBlob = await worker.output('blob');
           const blobUrl = URL.createObjectURL(pdfBlob);
