@@ -398,6 +398,7 @@
       }
     }
 
+    // Main single function that handles backend calls, rendering, and smooth PDF download
     async function sendBackendRequest(payload, statusDiv, btnElement, loaderElement, loaderTextElement, titleHeader, fileName) {
       btnElement.disabled = true;
       loaderElement.style.display = "flex";
@@ -414,7 +415,7 @@
         const data = await response.json();
 
         if (response.ok && data.result) {
-          loaderTextElement.textContent = "Formatting Exact A4 Pages & Compiling PDF...";
+          loaderTextElement.textContent = "Formatting A4 Pages & Preparing Document...";
 
           let cleanText = data.result;
           cleanText = cleanText.replace(/\$([^\$]+)\$/g, '$1');
@@ -443,16 +444,28 @@
             </div>
           `;
 
+          // Optimized scale: 1.5 to prevent system memory lock / mouse freeze
           const opt = {
             margin:       0,
             filename:     fileName,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, logging: false },
+            image:        { type: 'jpeg', quality: 0.95 },
+            html2canvas:  { scale: 1.5, useCORS: true, logging: false },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
             pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
           };
 
-          await html2pdf().set(opt).from(document.getElementById("pdfWrapper")).save();
+          // Generate PDF using Blob output to avoid Windows dialog thread freezing
+          const worker = html2pdf().set(opt).from(document.getElementById("pdfWrapper"));
+          const pdfBlob = await worker.output('blob');
+          const blobUrl = URL.createObjectURL(pdfBlob);
+          
+          const downloadAnchor = document.createElement('a');
+          downloadAnchor.href = blobUrl;
+          downloadAnchor.download = fileName;
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          downloadAnchor.remove();
+
           statusDiv.textContent = "✅ PDF downloaded successfully!";
         } else {
           statusDiv.textContent = "❌ Error: " + (data.error || "Failed to generate content.");
@@ -465,7 +478,7 @@
       }
     }
 
-    // Tab 1: Test Paper Submit Handler
+    // Tab 1 Handler
     document.getElementById('paperForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const classVal = document.getElementById('classSelect').value;
@@ -492,7 +505,7 @@
       await sendBackendRequest(payload, statusDiv, submitBtn, loader, loaderText, "PRACTICE ASSESSMENT", `${classVal}_Practice_Paper.pdf`);
     });
 
-    // Tab 2: Chapter Notes Handler
+    // Tab 2 Handler
     async function generateChapterNotes() {
       const classVal = document.getElementById("notesClass").value;
       const subVal = document.getElementById("notesSubject").value;
@@ -517,7 +530,7 @@
       await sendBackendRequest(payload, statusDiv, notesBtn, loader, loaderText, "CHAPTER REVISION NOTES", `${classVal}_${subVal}_Notes.pdf`);
     }
 
-    // Tab 3: Solution Resolver Handler
+    // Tab 3 Handler
     async function generateSolution() {
       const qVal = document.getElementById("userQuestion").value.trim();
       const resolverBtn = document.getElementById("resolverBtn");
