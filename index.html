@@ -106,7 +106,7 @@
     button:hover { background-color: var(--primary-hover); }
     button:disabled { background-color: #cccccc; cursor: not-allowed; }
     
-    /* Loading Animation Component */
+    /* Clean Loader Component - No Text Displayed */
     .ai-loader {
       display: none;
       flex-direction: column;
@@ -126,24 +126,11 @@
       border-top: 4px solid var(--primary-color);
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin-bottom: 12px;
-    }
-
-    .loader-text {
-      font-weight: bold;
-      color: #004c99;
-      font-size: 15px;
-      animation: pulseText 1.5s ease-in-out infinite alternate;
     }
 
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
-    }
-
-    @keyframes pulseText {
-      0% { opacity: 0.6; }
-      100% { opacity: 1; }
     }
 
     .status-msg { margin-top: 15px; font-weight: bold; text-align: center; }
@@ -161,7 +148,7 @@
     .faq-item h4 { margin: 0 0 5px 0; color: #0066cc; }
     .faq-item p { margin: 0; font-size: 14px; color: #555; }
 
-    /* Strict A4 Document Layout & Page Line-Break Rules */
+    /* Strict A4 Document Layout */
     .cbse-pdf-paper {
       background: #fff;
       width: 210mm;
@@ -192,7 +179,7 @@
       break-inside: avoid;
     }
 
-    /* Print & Export Media Query */
+    /* Print Media Query */
     @media print {
       @page {
         size: A4 portrait;
@@ -245,10 +232,8 @@
       <button type="submit" id="submitBtn">Generate Assessment PDF</button>
     </form>
     
-    <!-- Loader Component -->
     <div id="generatorLoader" class="ai-loader">
       <div class="spinner"></div>
-      <div class="loader-text" id="generatorLoaderText">Generating CBSE Assessment...</div>
     </div>
     <div id="status" class="status-msg"></div>
   </div>
@@ -283,10 +268,8 @@
 
     <button type="button" id="notesBtn" onclick="generateChapterNotes()">Generate Chapter Revision Notes PDF</button>
 
-    <!-- Loader Component -->
     <div id="notesLoader" class="ai-loader">
       <div class="spinner"></div>
-      <div class="loader-text" id="notesLoaderText">Structuring Chapter Notes...</div>
     </div>
     <div id="notesStatus" class="status-msg"></div>
   </div>
@@ -300,10 +283,8 @@
 
     <button type="button" id="resolverBtn" onclick="generateSolution()">Solve & Download Solution PDF</button>
 
-    <!-- Loader Component -->
     <div id="resolverLoader" class="ai-loader">
       <div class="spinner"></div>
-      <div class="loader-text" id="resolverLoaderText">Solving Problem & Formatting PDF...</div>
     </div>
     <div id="resolverStatus" class="status-msg"></div>
   </div>
@@ -398,11 +379,9 @@
       }
     }
 
-    // Main backend communication and PDF export handler
-    async function sendBackendRequest(payload, statusDiv, btnElement, loaderElement, loaderTextElement, titleHeader, fileName) {
+    async function sendBackendRequest(payload, statusDiv, btnElement, loaderElement, titleHeader, fileName) {
       btnElement.disabled = true;
       loaderElement.style.display = "flex";
-      loaderTextElement.textContent = "Connecting to Gemini AI Backend...";
       statusDiv.textContent = "";
 
       try {
@@ -415,16 +394,12 @@
         const data = await response.json();
 
         if (response.ok && data.result) {
-          loaderTextElement.textContent = "Formatting A4 Pages & Preparing Document...";
-
           let cleanText = data.result;
 
-          // 1. Sanitize LaTeX syntax and prevent Markdown multiplication glitch
+          // Clean symbols and formulas
           cleanText = cleanText.replace(/\\times/g, ' × ');
           cleanText = cleanText.replace(/\\div/g, ' ÷ ');
           cleanText = cleanText.replace(/\\rightarrow/g, ' → ');
-
-          // 2. Format superscripts and subscripts cleanly
           cleanText = cleanText.replace(/\$\$([^\$]+)\$\$/g, '<div style="text-align:center;margin:10px 0;font-weight:bold;">$1</div>');
           cleanText = cleanText.replace(/\$([^\$]+)\$/g, '<span>$1</span>');
           cleanText = cleanText.replace(/([a-zA-Z0-9\)]+)\^([0-9a-zA-Z\+\-]+)/g, '$1<sup>$2</sup>');
@@ -432,7 +407,7 @@
 
           let parsedHtml = marked.parse(cleanText);
 
-          // 3. Render raw SVG diagrams seamlessly
+          // Render embedded SVG diagrams
           parsedHtml = parsedHtml.replace(/<pre><code class="(?:language-)?(?:xml|html|svg)">([\s\S]*?)<\/code><\/pre>|```(?:xml|html|svg)?\s*(<svg[\s\S]*?<\/svg>)\s*```|(<svg[\s\S]*?<\/svg>)/gi, function(match, codeBlockContent, backtickSvg, rawSvg) {
             let svgContent = codeBlockContent || backtickSvg || rawSvg;
             svgContent = svgContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
@@ -454,7 +429,6 @@
             </div>
           `;
 
-          // Scale 1.5 prevents thread locking and mouse cursor freezing
           const opt = {
             margin:       0,
             filename:     fileName,
@@ -464,7 +438,6 @@
             pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
           };
 
-          // Generate PDF via Blob URL for smooth native download
           const worker = html2pdf().set(opt).from(document.getElementById("pdfWrapper"));
           const pdfBlob = await worker.output('blob');
           const blobUrl = URL.createObjectURL(pdfBlob);
@@ -488,7 +461,7 @@
       }
     }
 
-    // Tab 1 Handler
+    // Tab 1 Submit Handler
     document.getElementById('paperForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const classVal = document.getElementById('classSelect').value;
@@ -497,7 +470,6 @@
       const submitBtn = document.getElementById('submitBtn');
       const statusDiv = document.getElementById('status');
       const loader = document.getElementById('generatorLoader');
-      const loaderText = document.getElementById('generatorLoaderText');
 
       if (selectedSubjects.length === 0) {
         alert("Please select at least one subject!");
@@ -512,10 +484,10 @@
         max_marks: "80"
       };
 
-      await sendBackendRequest(payload, statusDiv, submitBtn, loader, loaderText, "PRACTICE ASSESSMENT", `${classVal}_Practice_Paper.pdf`);
+      await sendBackendRequest(payload, statusDiv, submitBtn, loader, "PRACTICE ASSESSMENT", `${classVal}_Practice_Paper.pdf`);
     });
 
-    // Tab 2 Handler
+    // Tab 2 Notes Handler
     async function generateChapterNotes() {
       const classVal = document.getElementById("notesClass").value;
       const subVal = document.getElementById("notesSubject").value;
@@ -523,7 +495,6 @@
       const notesBtn = document.getElementById("notesBtn");
       const statusDiv = document.getElementById("notesStatus");
       const loader = document.getElementById('notesLoader');
-      const loaderText = document.getElementById('notesLoaderText');
 
       if (!classVal || !subVal || !chapVal) {
         alert("Please fill in Class, Subject, and Chapter Name!");
@@ -537,16 +508,15 @@
         chapter: chapVal
       };
 
-      await sendBackendRequest(payload, statusDiv, notesBtn, loader, loaderText, "CHAPTER REVISION NOTES", `${classVal}_${subVal}_Notes.pdf`);
+      await sendBackendRequest(payload, statusDiv, notesBtn, loader, "CHAPTER REVISION NOTES", `${classVal}_${subVal}_Notes.pdf`);
     }
 
-    // Tab 3 Handler
+    // Tab 3 Solver Handler
     async function generateSolution() {
       const qVal = document.getElementById("userQuestion").value.trim();
       const resolverBtn = document.getElementById("resolverBtn");
       const statusDiv = document.getElementById("resolverStatus");
       const loader = document.getElementById('resolverLoader');
-      const loaderText = document.getElementById('resolverLoaderText');
 
       if (!qVal) {
         alert("Please type or paste a question first!");
@@ -560,7 +530,7 @@
         custom_question: qVal
       };
 
-      await sendBackendRequest(payload, statusDiv, resolverBtn, loader, loaderText, "SOLVER & MARKING SCHEME", "CBSE_Solution.pdf");
+      await sendBackendRequest(payload, statusDiv, resolverBtn, loader, "SOLVER & MARKING SCHEME", "CBSE_Solution.pdf");
     }
 
     updateGeneratorSubjects();
