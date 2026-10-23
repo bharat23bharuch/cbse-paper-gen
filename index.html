@@ -148,6 +148,19 @@
 
     .status-msg { margin-top: 15px; font-weight: bold; text-align: center; }
 
+    /* Static FAQ Section */
+    .faq-section {
+      margin-top: 40px;
+      padding: 20px;
+      background: #fafafa;
+      border: 1px solid #eaeaea;
+      border-radius: 6px;
+    }
+    .faq-section h3 { color: #1A365D; margin-top: 0; text-align: center; }
+    .faq-item { margin-bottom: 15px; }
+    .faq-item h4 { margin: 0 0 5px 0; color: #0066cc; }
+    .faq-item p { margin: 0; font-size: 14px; color: #555; }
+
     /* Strict A4 Document Layout & Page Line-Break Rules */
     .cbse-pdf-paper {
       background: #fff;
@@ -185,7 +198,7 @@
         size: A4 portrait;
         margin: 10mm;
       }
-      .tab-container, button, footer, .gcse-search, .form-group, .status-msg, .ai-loader { display: none !important; }
+      .tab-container, button, footer, .gcse-search, .form-group, .status-msg, .ai-loader, .faq-section { display: none !important; }
       body { max-width: 100%; margin: 0; padding: 0; background: #fff; }
       .cbse-pdf-paper { border: none; box-shadow: none; width: 100%; padding: 0; }
     }
@@ -303,19 +316,40 @@
     <div class="gcse-search"></div>
   </div>
 
+  <!-- Static FAQ Section for AdSense Value Compliance -->
+  <div class="faq-section">
+    <h3>Frequently Asked Questions (FAQs)</h3>
+    <div class="faq-item">
+      <h4>How are the test papers generated?</h4>
+      <p>Our generator builds questions aligned with the latest CBSE Class 6-12 syllabus pattern, incorporating marking schemes and chapter-wise weightage.</p>
+    </div>
+    <div class="faq-item">
+      <h4>Are these papers free to download?</h4>
+      <p>Yes, all generated practice papers, chapter revision notes, and step-by-step solutions can be printed or saved as formatted PDFs at no cost.</p>
+    </div>
+    <div class="faq-item">
+      <h4>How do I search official CBSE Previous Year Questions (PYQs)?</h4>
+      <p>Use the 'Official PYQs' tab above to query official CBSE repositories directly for archived board exam papers and answer keys.</p>
+    </div>
+  </div>
+
   <!-- Hidden Printable PDF Container -->
   <div id="outputContainer" style="display:none;">
     <div id="paperContent"></div>
   </div>
 
-  <!-- Footer -->
-  <footer style="margin-top: 40px; padding: 20px; text-align: center; font-size: 12px; color: #666; border-top: 1px solid #eee;">
-    <p><strong>Disclaimer:</strong> Independent educational tool for self-assessment based on CBSE curriculum pattern. Not affiliated with CBSE.</p>
-    <div style="margin-top: 12px; font-size: 13px;">
-      <a href="terms.html" style="color: #0066cc; text-decoration: none;">Terms & Conditions</a> | 
-      <a href="privacy.html" style="color: #0066cc; text-decoration: none;">Privacy Policy</a> | 
-      <a href="disclaimer.html" style="color: #0066cc; text-decoration: none;">Disclaimer</a> | 
-      <a href="contact.html" style="color: #0066cc; text-decoration: none;">Contact Us</a>
+  <!-- Footer with Legal Pages -->
+  <footer style="margin-top: 50px; padding: 25px 20px; text-align: center; font-size: 13px; color: #555; background: #f9f9f9; border-top: 2px solid var(--border-color); border-radius: 6px;">
+    <p style="margin: 0 0 12px 0;"><strong>Disclaimer:</strong> Independent educational tool for self-assessment based on CBSE curriculum pattern. Not affiliated with CBSE.</p>
+    
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 10px; font-weight: bold;">
+      <a href="terms.html" style="color: var(--primary-color); text-decoration: none;">Terms & Conditions</a>
+      <span style="color: #ccc;">|</span>
+      <a href="privacy.html" style="color: var(--primary-color); text-decoration: none;">Privacy Policy</a>
+      <span style="color: #ccc;">|</span>
+      <a href="disclaimer.html" style="color: var(--primary-color); text-decoration: none;">Disclaimer</a>
+      <span style="color: #ccc;">|</span>
+      <a href="contact.html" style="color: var(--primary-color); text-decoration: none;">Contact Us</a>
     </div>
   </footer>
 
@@ -409,7 +443,6 @@
             </div>
           `;
 
-          // Exact A4 Dimensions and Page Split Configuration
           const opt = {
             margin:       0,
             filename:     fileName,
